@@ -10,3 +10,5 @@
 | [004-两包校验规则是否同源](004-两包校验规则是否同源.md) | pi-toolkit 与 dsh-toolkit 各带一份 check-domain.mjs，lib 三模块逐字一致；改规则必须两包同改。 |
 | [005-跑测试会不会在tmp留目录](005-跑测试会不会在tmp留目录.md) | 判断哪个包的测试外溢临时目录：按前缀统计 /tmp 前后数量；当前只有 repos/music 曾漏，已修，其余包自带清理。 |
 | [006-两包随包skill是否同源](006-两包随包skill是否同源.md) | pi-toolkit 与 dsh-toolkit 各带一份 skill 树：同名 9 个文件逐字一致，learning/ANKI.md 只差一行宿主调用语法；改共享 skill 两包同改，没有脚本兜底。 |
+| [007-私有仓的tgz制品为什么装不上](007-私有仓的tgz制品为什么装不上.md) | 私有仓的 Release 资产与 raw 链接都要登录态，pnpm 匿名拉取会 404；解法是把仓转 public 并把 tgz 提交进 release/。 |
+| [008-用bsk操作GitHub时为什么会失败](008-用bsk操作GitHub时为什么会失败.md) | settings / releases 页偶发 ERR_CONNECTION_CLOSED，重开 session 即恢复；Release 资产上传被失效的控制上下文拦住，改用提交进仓的 tgz。 |

@@ -37,3 +37,21 @@ _Avoid_：apply mode、normal mode
 **预演**：
 由全局 `--dry-run` 选项启用的执行模式；写命令只返回原本将执行的操作，不产生持久化副作用。
 _Avoid_：模拟执行、试跑、只读模式
+
+### 工作区形态（由拆分多仓贡献）
+
+**容器仓**：
+只做工作区与多仓管理的 git 仓（远端 `kxh4892636/awesome`，本地目录仍叫 `kxh-kit`）：根上只有 `.agents/`、`scripts/`、`workspace.yaml`、说明文件与运行目录，不放任何代码依赖。
+_Avoid_：monorepo、主仓、根包
+
+**子仓**：
+`repos/<名>` 下各自带 `.git`、`pnpm-lock.yaml` 与工具链的独立仓，共九个；每个都能单独 `pnpm install` 与构建，版本各自演进。
+_Avoid_：submodule、子包、workspace 包
+
+**目录历史**：
+用 `git subtree split --prefix=<目录>` 从容器仓抽出的、只含该目录提交的重写历史；提交号全新，旧分支不能沿用。
+_Avoid_：迁移历史、filter-repo 历史
+
+**工作区清单**：
+根 `workspace.yaml`，逐个登记子仓的 `name` / `url` / `branch` / `path`；新机器克隆与新增子仓都以它为唯一索引。
+_Avoid_：pnpm workspace、仓库列表、submodule 清单

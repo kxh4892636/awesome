@@ -1,14 +1,21 @@
 # GUIDE
 
-`kxh-kit` 的会话启动快照。这里只放索引与指针：结论在下列文档里，需要细节就点进去，不要在这里复述。
+`awesome` 工作区的会话启动快照（本地目录仍叫 `kxh-kit`）。这里只放索引与指针：结论在下列文档里，需要细节就点进去，不要在这里复述。
+
+## 工作区形态
+
+- 容器仓 `kxh4892636/awesome` 只做工作区与仓库管理：根上只有 `.agents/`、`scripts/`、`workspace.yaml`、说明文件与运行目录，**没有 `package.json` / 锁文件 / `node_modules`**（[common ADR 002](common/adr/002-容器仓只做工作区管理.md)）。
+- 九个包各是一个独立仓，平铺在 `repos/<名>`，各自带 `.git`、`pnpm-lock.yaml` 与工具链；清单是根 `workspace.yaml`（name / url / branch / path）。改代码要进对应子仓，容器仓 `git status` 看不到子仓改动。
+- 跨仓依赖只走「仓内 `release/*.tgz` + public raw URL」：不发 npm、不用 Release 资产、不用 git 源码（[common ADR 003](common/adr/003-跨仓制品走仓内tgz与raw链接.md)）。
+- 只存在于磁盘的私有内容（如 `repos/wiki/docs/010-记录`）不进任何 git；搬目录必须整目录搬移，验收与踩坑见 [common 002 工作流](common/workflows/002-拆分单仓为多个独立仓/002-拆分单仓为多个独立仓.md)。
 
 ## 领域
 
 - **pi**（`pi`）：当前主力扩展域，`@kxh4892636/pi-toolkit` 一个包五个开关（nestedSkills / sessionName / webTools / askQuestions / nanoFlow），Nano Flow 也在这里实现。词表见 [pi/CONTEXT.md](pi/CONTEXT.md)。
 - **DSH**（`dsh`）：`@kxh4892636/dsh-toolkit` 工具集与 DSH 版 Agent 预设（宿主侧完整形态）。词表见 [dsh/CONTEXT.md](dsh/CONTEXT.md)。
 - **nano-flow**：`nnf` CLI 只剩 `anki` / `self` / `fixture`；`workspace` 命令组与文档流程 skill 已于 2026-11-09 下线，流程改由 pi / dsh 的 nano-flow 实现提供。词表见 [nano-flow/CONTEXT.md](nano-flow/CONTEXT.md)。
-- **common**：跨域共享约定（受管 skill、执行模态、同源实现、发布包依赖、Vite+ 工具链）。词表见 [common/CONTEXT.md](common/CONTEXT.md)。
-- **wiki**（`wiki`）：`apps/wiki` 是 Docusaurus 个人知识站，栏目 = `docs/` 一级编号目录；思维导图是正文里的 `<Mindmap>` 渲染块，节点 = markdown 标题、编号即 id、文档引用写作 `[说明](路径.md) doc:<id>`（[adr 001](wiki/adr/001-导图是文档内渲染块而非独立路由.md)、[adr 003](wiki/adr/003-节点编号即id.md)）。词表见 [wiki/CONTEXT.md](wiki/CONTEXT.md)。
+- **common**：跨域共享约定（工作区形态、容器仓与子仓、受管 skill、执行模态、同源实现、发布包依赖、Vite+ 工具链）。词表见 [common/CONTEXT.md](common/CONTEXT.md)。
+- **wiki**（`wiki`）：`repos/wiki` 是 Docusaurus 个人知识站，栏目 = `docs/` 一级编号目录；思维导图是正文里的 `<Mindmap>` 渲染块，节点 = markdown 标题、编号即 id、文档引用写作 `[说明](路径.md) doc:<id>`（[adr 001](wiki/adr/001-导图是文档内渲染块而非独立路由.md)、[adr 003](wiki/adr/003-节点编号即id.md)）。词表见 [wiki/CONTEXT.md](wiki/CONTEXT.md)。
 - etf / music / video 各自是产品域。全部入口见 [CONTEXT-MAP.md](CONTEXT-MAP.md)。
 
 ## 不可违反的约定
@@ -20,7 +27,7 @@
 - 恢复已有 Plan 的那一轮只读：先 `nano_flow_bind`，再只报告，等用户第一条后续消息放行。
 - Plan 绑定只由 `nano_flow_bind` 与轮转过继写（[009](dsh/adr/009-Plan绑定只经bind工具.md)、[013](dsh/adr/013-轮转把Plan绑定过继给新会话.md)）；过继只按「目录存在」判断，Plan 迁 reference 后的空壳目录照样被继承（[014](dsh/questions/014-轮转为何绑定到已归档Plan.md)）。`GUIDE.md` 正文只由 dream 重写。
 - 上下文续接：DSH 是会话轮转（新会话 + seed，物理删除旧会话）；pi 是上下文清空（`nano-flow-reset` 过滤历史 + seed，不换会话）。两者 seed 都只带当前 Plan 与上一轮输出，所以**每轮结束前必须把检查点写回 spec 与 note**。
-- 领域文档的校验规则由包内 `check-domain.mjs` 执行（YAML 头 + 小写 `questions/` + 三位编号）。pi 与 dsh 各带一份，`lib/` 逐字一致，**改规则两包同改**（[common 004](common/questions/004-两包校验规则是否同源.md)）。随包旧 skill 的布局（`story.md`、`QUESTIONS.md`、四位编号、story 模型）不再适用于本工作区的领域文档。
+- 领域文档的校验规则由包内 `check-domain.mjs` 执行（YAML 头 + 小写 `questions/` + 三位编号）。pi 与 dsh 各带一份（`repos/pi-toolkit/src/nano-flow/scripts/` 与 `repos/dsh-toolkit/src/nano-flow/scripts/`），`lib/` 逐字一致，**改规则两包同改**（[common 004](common/questions/004-两包校验规则是否同源.md)）。随包旧 skill 的布局（`story.md`、`QUESTIONS.md`、四位编号、story 模型）不适用于本工作区的领域文档。
 
 ## 记忆维护
 
@@ -32,11 +39,12 @@
 ## 热点入口
 
 - 只剩一个 `status: completed` 但仍留在 `active` 的 Plan，等用户确认后才迁 `reference`：wiki [2026-11-13-思维导图插件](wiki/plans/active/2026-11-13-思维导图插件/spec.md)（8 条 note 全 completed，`<Mindmap>` 导图块已上线、整站 build 通过）。
-- 已迁 `reference` 的最近几件：dsh [2026-11-13-Windows测试假红与轮转绑定](dsh/plans/reference/2026-11-13-Windows测试假红与轮转绑定/spec.md)（375 例全绿，0.5.51 已装 desktop / web 两个 profile）、music [2026-11-11-自动播放倒计时](music/plans/reference/2026-11-11-自动播放倒计时/spec.md)（6 条 note 全 completed、已上线）、dsh [2026-11-13-nano-flow功能与链路梳理](dsh/plans/reference/2026-11-13-nano-flow功能与链路梳理/spec.md) 与 [2026-11-13-dsh与pi对齐](dsh/plans/reference/2026-11-13-dsh与pi对齐/spec.md)（12 条全 completed，0.5.47→0.5.48 发布验收）；pi 侧最近收口的是 [2026-11-09-pi-toolkit插件](pi/plans/reference/2026-11-09-pi-toolkit插件/spec.md)（含 013 `/dream` 与 014 轨迹落盘）与 [2026-11-09-commandcode-provider接入](pi/plans/reference/2026-11-09-commandcode-provider接入/spec.md)。
+- 本工作区形态的来源：[common 2026-11-14-拆分单仓为多仓库](common/plans/reference/2026-11-14-拆分单仓为多仓库/spec.md)（9 条 note 全 completed，九仓拆出并推到 public，容器仓改名 awesome）。
+- 已迁 `reference` 的其它近期 Plan：dsh [2026-11-13-Windows测试假红与轮转绑定](dsh/plans/reference/2026-11-13-Windows测试假红与轮转绑定/spec.md)（375 例全绿，0.5.51 已装 desktop / web 两个 profile）、music [2026-11-11-自动播放倒计时](music/plans/reference/2026-11-11-自动播放倒计时/spec.md)（6 条 note 全 completed、已上线）、dsh [2026-11-13-nano-flow功能与链路梳理](dsh/plans/reference/2026-11-13-nano-flow功能与链路梳理/spec.md) 与 [2026-11-13-dsh与pi对齐](dsh/plans/reference/2026-11-13-dsh与pi对齐/spec.md)（12 条全 completed，0.5.47→0.5.48 发布验收）；pi 侧最近收口的是 [2026-11-09-pi-toolkit插件](pi/plans/reference/2026-11-09-pi-toolkit插件/spec.md)（含 013 `/dream` 与 014 轨迹落盘）与 [2026-11-09-commandcode-provider接入](pi/plans/reference/2026-11-09-commandcode-provider接入/spec.md)。
 - 更早的 dsh Plan：[2026-11-09-nano-flow优化迭代](dsh/plans/reference/2026-11-09-nano-flow优化迭代/spec.md)（绑定、面板提示、写入节奏、note 划分、代码治理 16 条全 completed，收口在 [源码按能力分层](dsh/adr/012-源码按能力分层.md)）；轮转与 seed 设计在 [2026-11-08-nano-flow重构与dsh迁移](dsh/plans/archived/2026-11-08-nano-flow重构与dsh迁移/spec.md)。
-- 源码：pi 侧 `packages/pi-toolkit/src/nano-flow/`（`prompts/system.md`、`prompts/dream.md`、`scripts/check-domain.mjs`、`skills/`）；dsh 侧 `packages/dsh-toolkit/src/nano-flow/` 按能力分六目录（assembly / session / documents / planning / dream / skills），预设挂 `dsh-tool-executor-ptc`（[011](dsh/adr/011-预设挂PTC执行器.md)）。
-- 交付工作流：[pi 001 安装并真机验收](pi/workflows/001-安装pi-toolkit并真机验收/001-安装pi-toolkit并真机验收.md)、[dsh 001 发布并真机验收](dsh/workflows/001-发布dsh-toolkit并真机验收/001-发布dsh-toolkit并真机验收.md)（含 nano-flow 侧走查清单）、[music 001 部署曲库与站点](music/workflows/001-部署曲库与站点到服务器/001-部署曲库与站点到服务器.md)、[common 001 Vite+ 大版本升级](common/workflows/001-vite-plus大版本升级/001-vite-plus大版本升级.md)。
-- 常见坑：[dsh 问题索引](dsh/questions/index.md)——恢复只读、预设出现但工具缺失、历史加载失败、PATH 上的 dsh 装错 profile、宿主悬浮提示的锚点与宽度、dream 游标路径、scan 的「需要留意」、Windows 上单测假红的平台假设；[wiki 问题索引](wiki/questions/index.md)——MDX 把 `doc:` 后缀吃成指令、本地起站只监听 `::1`、`doc:` 写错 build 不报错、导图样式两份副本；[common 问题索引](common/questions/index.md)——发布包依赖、覆盖率门槛、提交时文件被改写、两包校验规则同源、两包随包 skill 的同源程度；[pi 问题索引](pi/questions/index.md)——轨迹残留旧目录、overlay 格子底色、commandcode 403 套餐权限；[music 问题索引](music/questions/index.md)——音频 e2e 的墙钟与真浏览器、node 环境下 zustand 持久化断言；[nano-flow 问题索引](nano-flow/questions/index.md)——受管 skill 不更新、`nnf` 在 bash 里找不到。
+- 源码：pi 侧 `repos/pi-toolkit/src/nano-flow/`（`prompts/system.md`、`prompts/dream.md`、`scripts/check-domain.mjs`、`skills/`）；dsh 侧 `repos/dsh-toolkit/src/nano-flow/` 按能力分六目录（assembly / session / documents / planning / dream / skills），预设挂 `dsh-tool-executor-ptc`（[011](dsh/adr/011-预设挂PTC执行器.md)）。
+- 交付工作流：[pi 001 安装并真机验收](pi/workflows/001-安装pi-toolkit并真机验收/001-安装pi-toolkit并真机验收.md)、[dsh 001 发布并真机验收](dsh/workflows/001-发布dsh-toolkit并真机验收/001-发布dsh-toolkit并真机验收.md)（含 nano-flow 侧走查清单）、[music 001 部署曲库与站点](music/workflows/001-部署曲库与站点到服务器/001-部署曲库与站点到服务器.md)、[common 001 Vite+ 大版本升级](common/workflows/001-vite-plus大版本升级/001-vite-plus大版本升级.md)、[common 002 拆分单仓为多个独立仓](common/workflows/002-拆分单仓为多个独立仓/002-拆分单仓为多个独立仓.md)。
+- 常见坑：[dsh 问题索引](dsh/questions/index.md)——恢复只读、预设出现但工具缺失、历史加载失败、PATH 上的 dsh 装错 profile、宿主悬浮提示的锚点与宽度、dream 游标路径、scan 的「需要留意」、Windows 上单测假红的平台假设；[wiki 问题索引](wiki/questions/index.md)——MDX 把 `doc:` 后缀吃成指令、本地起站只监听 `::1`、`doc:` 写错 build 不报错、导图样式两份副本；[common 问题索引](common/questions/index.md)——私有仓制品装不上、bsk 操作 GitHub 失败、发布包依赖、覆盖率门槛、提交时文件被改写、两包校验规则与随包 skill 的同源程度；[pi 问题索引](pi/questions/index.md)——轨迹残留旧目录、overlay 格子底色、commandcode 403 套餐权限；[music 问题索引](music/questions/index.md)——音频 e2e 的墙钟与真浏览器、node 环境下 zustand 持久化断言；[nano-flow 问题索引](nano-flow/questions/index.md)——受管 skill 不更新、`nnf` 在 bash 里找不到。
 
 ## 用法
 

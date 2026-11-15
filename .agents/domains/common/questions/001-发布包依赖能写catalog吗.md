@@ -17,6 +17,8 @@ description: '发布包的生产依赖字段不能写 catalog:，安装方会报
 
 会被安装方解析的字段写显式版本区间（如 `^2.9.0`）；`devDependencies` 仍可使用 `catalog:`。新增发布包时补一条 `npm pack` + `npm install` 的验证。
 
+> 纠正（2026-11-15，common/2026-11-14-拆分单仓为多仓库 seq 2214-2344）：拆仓后容器仓不再有 catalog，`catalog:` 已无处可写，各子仓一律写显式版本（[ADR 002](../adr/002-容器仓只做工作区管理.md)）；「`devDependencies` 仍可使用 `catalog:`」只适用于拆分前。
+
 ## 验证
 
 `npm pack` 后检查 tarball 内 `package.json` 的 `dependencies` 不含 `catalog:`；`repos/nano-flow/test/distribution.spec.ts` 覆盖该路径。

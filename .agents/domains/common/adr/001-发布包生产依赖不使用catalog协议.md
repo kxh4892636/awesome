@@ -19,3 +19,7 @@ pnpm 的 `catalog:` 协议只在 pnpm 自己的打包/发布路径上被改写�
 - `pnpm-workspace.yaml` 的 catalog 只服务 `devDependencies` 与工作区内共享版本；为生产依赖保留 catalog 条目会成为陷阱，因此删除了未被任何 `catalog:` 引用消费的 `yaml` 条目。
 - `repos/dsh-keep-alive` 的 `zod` 由 `catalog:` 改为显式 `4.5.4`（与 catalog 同版本）；`nano-flow`、`dsh-nested-skill` 的 `yaml` 保持显式 `^2.9.0`。
 - 该问题不会被 `vp check` 或单元测试发现，只有 distribution 用例（`npm pack` + `npm install`）能覆盖；新增发布包时应同步补一条同口径验证。
+
+## 纠正
+
+> 纠正（2026-11-15，common/2026-11-14-拆分单仓为多仓库 seq 2214-2344）：容器仓已不再有 `pnpm-workspace.yaml` 与 catalog，各子仓版本一律写显式值（[002](002-容器仓只做工作区管理.md)）。下文「`devDependencies` 仍可用 `catalog:`」只描述拆分前的形态；结论「生产依赖写显式版本」不变，只是现在整仓都没有 catalog 可用，规则退化成「版本一律写显式值」。
