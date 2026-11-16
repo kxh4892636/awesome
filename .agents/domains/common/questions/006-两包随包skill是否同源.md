@@ -18,7 +18,7 @@ description: 'pi-toolkit 与 dsh-toolkit 各带一份 skill 树：同名 9 个�
 | 包 | skill 目录 | 文件数 |
 | --- | --- | --- |
 | pi-toolkit | code-spec / learning / ponytail-audit / ponytail-review / to-skill | 10 |
-| dsh-toolkit | 同上 + ponytail / pp | 13 |
+| dsh-toolkit | 同上 + ponytail / ap / ad | 15 |
 
 同名文件 9 个逐字一致，唯一的差异是 `learning/ANKI.md` 的一行：
 
@@ -29,7 +29,7 @@ description: 'pi-toolkit 与 dsh-toolkit 各带一份 skill 树：同名 9 个�
 
 两份副本是必需的，两个包都要能单独发布、单独注入：pi 把 `skills` 根整个交给 `resources_discover`；dsh 用 `createAssetSkillProvider`（provider 名 `nano-flow-assets`，rank 200）动态发现 `<root>/<name>/SKILL.md`。共享一个包会让任一包多一个运行时依赖。
 
-**操作口径**：改共享 skill 就两包同改（正文、description 一致）；只允许调用语法这类宿主差异。新增 skill 只加需要它的包——`ponytail`、`pp` 目前只在 dsh 侧。
+**操作口径**：改共享 skill 就两包同改（正文、description 一致）；只允许调用语法这类宿主差异。新增 skill 只加需要它的包——`ponytail`、`ap`、`ad` 目前只在 dsh 侧。
 
 **没有兜底**：仓库里没有脚本或测试比对这两棵树（[004](004-两包校验规则是否同源.md) 的 `check-domain.mjs` 有，skill 没有），只改一包不会被门禁拦下。
 
