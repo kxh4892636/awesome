@@ -1,7 +1,7 @@
 ---
 name: "轮转保持原会话"
 description: "调研把 dsh-toolkit 的会话轮转从「新建会话 + 删除旧会话」改为「原会话内重置上下文」，让轮转后子 agent 与后台 job 继续存活，并落地实现与验收。"
-status: completed
+status: in_progress
 ---
 
 # 轮转保持原会话
@@ -61,9 +61,12 @@ status: completed
 
 - 2026-11-16 19:46：**Plan 迁 `reference`**（用户确认）。5 条 note 全 completed，0.5.56 已装 web profile；域 CONTEXT 的链接与「失败只 warn」一句同步改成现状。
 
+- 2026-11-16 20:12：用户要求 Plan **迁回 active**，并提出新问题：撤回工具同样靠新建会话，能否套用在原会话内遮蔽的思路。新开 006 承接；本轮只做只读调研，动手前等放行。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
+| [006-撤回在同一会话内完成](006-撤回在同一会话内完成.md) | 撤回工具现在走新建会话，与轮转旧做法同源；调研能否复用「原会话内遮蔽历史」的思路，让撤销不换会话、不杀子 agent 与后台 job。 | in_progress | — | 两个只读 subagent 并行查：插件侧撤回实现链、宿主侧可用的就地截断能力；汇总后定方案再动手 | 003-实现原会话内重置轮转, 005-拆除轮转死代码 |
