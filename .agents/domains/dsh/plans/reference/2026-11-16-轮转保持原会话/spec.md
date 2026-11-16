@@ -1,7 +1,7 @@
 ---
 name: "轮转保持原会话"
 description: "调研把 dsh-toolkit 的会话轮转从「新建会话 + 删除旧会话」改为「原会话内重置上下文」，让轮转后子 agent 与后台 job 继续存活，并落地实现与验收。"
-status: in_progress
+status: completed
 ---
 
 # 轮转保持原会话
@@ -50,7 +50,16 @@ status: in_progress
 - 2026-11-16 19:30：001 完成，结论 **B**：会话是「内存事件日志 + 派生表面 + append-only 落盘」，所以①改 jsonl 不降上下文、②删日志目录会毁活体会话（append 新建无 header 帧的文件 + 丢 lock inode）。可行路径是 `compaction/prune` + 带 `surfaceOp:{op:"replace"}` 的一条 user 消息原地遮蔽整段历史，sessionId 不变；宿主把它写成公开契约。子 agent / job 的真正杀手是 `archiveSession({stopActivity:true})` 发出的 `workspace/session-stop`，拆掉轮转的连带动作本身就保住它们。**用户前提「改 jsonl 轮转」与事实不符，已在 002/003 前纠正。**
 - 2026-11-16 20:10：002 完成。pi 的「不换会话清空」= 写一条 `nano-flow-reset` custom 条目 + 每次请求在 `context` 钩子里按时间戳过滤消息，磁盘不删任何东西；**dsh 写死 Model-visible means logged、无 per-request 钩子**，等价物只能是持久的 surface replace。用户已确认「界面历史仍在、只有模型失忆」的观感可接受，方案定案为持久遮蔽。
 - 2026-11-16 19:20：003 完成并验证。`rotate.ts` 改为原会话内遮蔽历史（`compaction/prune` + 带 `surfaceOp.replace` 的 seed 消息 + `sessions.flush`），删掉归档/删除旧会话的整条链路与 `<rotation-prior-input>` 包装；新增「回合结束才动表面」「重置后要产出新 assistant 才允许再重置」两道闸；`plan-log` 的 `user` 字段加 8 KB 上限。`pnpm test` 369 条全过，`vp check` 0 error 0 warning，`pnpm build` 通过。
+- 2026-11-16 19:33：004 真机验收通过。`rotateAt` 调到 0.1 触发重置：会话 id 不变、GUI 历史仍在、job 与子 agent 在重置瞬间存活，`compaction/prune` + `surfaceOp.replace` 各一条、遮蔽 149,947 tokens；重启宿主后重放折叠无异常（turn 10 请求 52k tokens 对比重置前 201k）。4 条 note 全部 completed，等用户确认后迁 `reference`。
 - 2026-11-16 19:25：提交 `6b5e9bd`，版本 bump 到 **0.5.54**，`pnpm pack` 后装入 web profile（`dsh plugin --profile web add`），`--dump-config` 组合正常。**真机验收待宿主重启**（bundle 只在启动时组合），清单见 004。
+
+- 2026-11-16 19:36：用户放行「死代码清理」，新开 005（`rotation` 路由 + 客户端 `rotation-follow` 永远拿 null）。执行段交给 subagent `deadcode-sweeper` 串行跑：删码 → 门禁 → 提交 → bump 0.5.55 → 装 web profile（不重启宿主）。Plan 暂不迁 `reference`，等 005 收口。
+
+- 2026-11-16 19:40：005 完成。rotation 路由与客户端跟随已拆除（640 行、13 文件，测试 370→357），check/build 通过，0.5.55 已装 web profile；README 里「建新会话 + 物理删旧会话」的陈旧描述一并改成同会话遮蔽。5 条 note 全 completed，等用户确认后迁 `reference`；生效需重启宿主。
+
+- 2026-11-16 19:44：`/ponytail-review` 走查后修三处（失败阶段区分、seed 不再要求等放行、删死声明 `create`），提交 `000c098` + `9ec5ecb`，**0.5.56** 已装 web profile，门禁 357 测试 / check 0/0 / build 通过。两处遗留（遮蔽不可回滚的窗口、废弃的 `snapshotEvents` 读接口）记在 003 的已知限制里。
+
+- 2026-11-16 19:46：**Plan 迁 `reference`**（用户确认）。5 条 note 全 completed，0.5.56 已装 web profile；域 CONTEXT 的链接与「失败只 warn」一句同步改成现状。
 
 ## 追踪 Note
 
@@ -58,4 +67,3 @@ status: in_progress
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [004-发布并真机验收轮转](004-发布并真机验收轮转.md) | 0.5.54 已打包并装入 web profile，静态与构建门禁全过；真机验收需要重启宿主后按清单跑一轮重置，确认会话 id 不变、子 agent 与后台 job 存活。 | pending | — | 重启宿主后把 rotateAt 临时调低到 0.001，发一条 queue 消息触发重置，按下面清单核对并回填本 note | 003-实现原会话内重置轮转 |

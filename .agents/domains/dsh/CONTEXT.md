@@ -89,7 +89,7 @@ toolkit 面板「Nano Flow 设置」维护的数值来源，持久化在 `$DSH_H
 _Avoid_：魔法数字、硬编码阈值
 
 **上下文重置**：
-预设不挂压缩插件；每发一条 queue 消息时读上下文压力，达到 `rotateAt × contextWindow` 就在**原会话内**遮蔽掉历史：保留表面第一个节点（系统提示），对 `nodes[1..]` 先追加 `compaction/prune` 记遮蔽价，紧跟一条带 `surfaceOp:{op:"replace"}` 的 `user/message` 把 seed 顶上去，最后 `sessions.flush()`。会话 id、工作区槽位、置顶、Plan 绑定、子 agent 与后台 job 全部原样存活——旧做法是新建会话 + 归档 + 删旧会话，`workspace/session-stop` 会把它们一并杀掉（[2026-11-16 Plan](plans/active/2026-11-16-轮转保持原会话/spec.md)）。seed = 「已重置」+ 当前 Plan（有绑定时附「绑定未变，无需再 bind」）+ 只读恢复要求 + 自动校验结论 + 末段上一轮模型输出 `<reset-last-output>` 块；用户原文不再包装，直接跟在 seed 后发出。两道闸：回合没结束不动表面（否则会抽掉进行中那一步的历史）、重置后必须产出新的 assistant 消息才允许再重置（防遮蔽价失真时连击）。失败只 warn 并回落成普通 prompt。遮蔽是持久的：日志不删，人类可见记录（append-origin 事件）与 `<plan>/log.jsonl` 仍是全史，但模型、重启后的续聊、fork 与导出都看不到被遮蔽的部分。旧轮转的两条结论（[ADR 013](adr/013-轮转把Plan绑定过继给新会话.md)、[question 014](questions/014-轮转为何绑定到已归档Plan.md)）只对已下线的做法有效。
+预设不挂压缩插件；每发一条 queue 消息时读上下文压力，达到 `rotateAt × contextWindow` 就在**原会话内**遮蔽掉历史：保留表面第一个节点（系统提示），对 `nodes[1..]` 先追加 `compaction/prune` 记遮蔽价，紧跟一条带 `surfaceOp:{op:"replace"}` 的 `user/message` 把 seed 顶上去，最后 `sessions.flush()`。会话 id、工作区槽位、置顶、Plan 绑定、子 agent 与后台 job 全部原样存活——旧做法是新建会话 + 归档 + 删旧会话，`workspace/session-stop` 会把它们一并杀掉（[2026-11-16 Plan](plans/reference/2026-11-16-轮转保持原会话/spec.md)）。seed = 「已重置」+ 当前 Plan（有绑定时附「绑定未变，无需再 bind」）+ 只读恢复要求 + 自动校验结论 + 末段上一轮模型输出 `<reset-last-output>` 块；用户原文不再包装，直接跟在 seed 后发出。两道闸：回合没结束不动表面（否则会抽掉进行中那一步的历史）、重置后必须产出新的 assistant 消息才允许再重置（防遮蔽价失真时连击）。失败只 warn 并回落成普通 prompt；若遮蔽已落地而这条 prompt 被拒，日志会分阶段标出（历史已丢，消息可能要重发）—— 遮蔽是 append-only，没有回滚路径。遮蔽是持久的：日志不删，人类可见记录（append-origin 事件）与 `<plan>/log.jsonl` 仍是全史，但模型、重启后的续聊、fork 与导出都看不到被遮蔽的部分。旧轮转的两条结论（[ADR 013](adr/013-轮转把Plan绑定过继给新会话.md)、[question 014](questions/014-轮转为何绑定到已归档Plan.md)）只对已下线的做法有效。
 _Avoid_：建新会话、归档、删除会话日志、改 `session.v4.jsonl.zstd`
 
 **恢复只读**：
@@ -101,7 +101,7 @@ nano-flow 预设会话在输入框上方 dock 显示的 note 面板（中文状�
 _Avoid_：待办面板、todo 面板、任务列表
 
 **Plan 轨迹日志**：
-nano-flow 预设会话每轮结束时向 `<plan>/log.jsonl` 追加的一条 compact 轨迹（user、assistant 最终文本、工具参数/结果摘要、usage、seq 区间）；绑定只由 `nano_flow_bind` 与轮转过继写（[ADR 009](adr/009-Plan绑定只经bind工具.md)、[013](adr/013-轮转把Plan绑定过继给新会话.md)），未绑定时服务只跟踪事件、不落盘；绑定后写当前轮与后续轮次，绑定前已完成的轮次不回填；切换后后续轮次写新 Plan，旧 Plan 不再追加。启动时从宿主持久化日志回填已绑定且归该 Plan 的历史轮次，绝不写会话事件。日志只存本地（`.gitignore` 忽略 `**/plans/**/log.jsonl`），轮转不删、只增量追加。会话被移除（轮转退休、撤回）时轨迹服务关掉该会话的读句柄并丢掉状态，迟到事件不再重建，句柄不随轮转累积。
+nano-flow 预设会话每轮结束时向 `<plan>/log.jsonl` 追加的一条 compact 轨迹（user、assistant 最终文本、工具参数/结果摘要、usage、seq 区间）；绑定只由 `nano_flow_bind` 与轮转过继写（[ADR 009](adr/009-Plan绑定只经bind工具.md)、[013](adr/013-轮转把Plan绑定过继给新会话.md)），未绑定时服务只跟踪事件、不落盘；绑定后写当前轮与后续轮次，绑定前已完成的轮次不回填；切换后后续轮次写新 Plan，旧 Plan 不再追加。启动时从宿主持久化日志回填已绑定且归该 Plan 的历史轮次，绝不写会话事件。日志只存本地（`.gitignore` 忽略 `**/plans/**/log.jsonl`），轮转不删、只增量追加。会话被删除或撤回时轨迹服务关掉该会话的读句柄并丢掉状态，迟到事件不再重建，句柄不随轮转累积。
 _Avoid_：会话转录、原始事件日志、audit log
 
 ### 记忆维护（dream）
