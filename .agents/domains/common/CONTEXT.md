@@ -52,6 +52,10 @@ _Avoid_：submodule、子包、workspace 包
 用 `git subtree split --prefix=<目录>` 从容器仓抽出的、只含该目录提交的重写历史；提交号全新，旧分支不能沿用。
 _Avoid_：迁移历史、filter-repo 历史
 
+**pnpm 设置文件**：
+子仓内的 `pnpm-workspace.yaml`，只当 `overrides` / `allowBuilds` / `peerDependencyRules` / `minimumReleaseAgeExclude` 的载体：`packages` 键可以不写，写了 `packages: []` 也不表示仓里有工作区成员。它与容器仓的「工作区清单」不是同一件事。
+_Avoid_：monorepo 残留、根工作区、workspace 配置
+
 **工作区清单**：
 根 `workspace.yaml`，逐个登记子仓的 `name` / `url` / `branch` / `path`；新机器克隆与新增子仓都以它为唯一索引。
 _Avoid_：pnpm workspace、仓库列表、submodule 清单
