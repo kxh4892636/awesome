@@ -3,7 +3,6 @@ name: "009-轮转复用宿主compact"
 description: "轮转不再自定义表面遮蔽，改为触发宿主 compact 引擎（不暴露 /compact 命令），压缩前要求 agent 更新 Plan 文档、压缩后读文档并跑 nano_flow_check。"
 status: completed
 related_noted: ["003-实现原会话内重置轮转", "008-移除撤回功能"]
-next_step: "subagent 按四步流程重写 rotate.ts + 预设挂 compaction-basic(auto:false)；主会话验收门禁、发 0.5.61、装 web profile、提交"
 ---
 
 # 009-轮转复用宿主compact
@@ -15,28 +14,13 @@ next_step: "subagent 按四步流程重写 rotate.ts + 预设挂 compaction-basi
 3. 压缩**前**插一步固定动作：要求 agent 更新当前 Plan 的 `spec.md` 与 note。
 4. 压缩**后**插一步固定动作：读取 `spec.md` 与 `notes_index.md`，然后执行 `nano_flow_check`。
 
-## 已核实的宿主分层（决定了"不暴露命令"可行）
-
-- 引擎：`dsh-compaction`（抽象类）+ `dsh-compaction-basic`（实现），API 为 `compactIfNeeded` / `compactNow` / `compactRegion`。
-- 命令：独立插件 `dsh-command-compact`；不装它就没有 `/compact`。
-- `compactNow(agent, signal, sourceCommandId?)` 要求 **idle agent**，会追加 `compaction/start` → 摘要 → `compaction/end`，保留尾部而不是清空。
-
-## 待查
-
-- `CompactionAgentContext` 长什么样、从 prompt 包装里怎么拿到；compact 的事件与失败语义。
-- Nano Flow 预设现在挂哪些插件、在哪个文件里挂；要挂引擎的话改哪里。
-- 插件侧能否在 `sessionController.prompt` 包装里"先发起一轮自己的动作并等它结束"，再压缩、再放行用户消息。
-
 ## 预设侧事实（preset-probe，2026-11-17）
 
-- 预设定义在 `src/nano-flow/assembly/preset.ts:48-123`（运行期由根插件 `agentPresets.register`），**当前没有任何 compaction 行**，且有 `preset.test.ts:20-26` 断言「名字不含 compaction」。
-- 宿主分层：`dsh-base` 挂了 `token-meter`/`compaction-basic`/`command-compact`；`dsh-web-app` 的 patch 把后两个 `disabled: true`，改由**各预设**在 `cordis:group` + `isolate: {compaction, toolResultPruner}` 里挂（`presets/standard.patch.yml:72-88`）。nano-flow 预设没这个 group，所以 nano-flow 会话里既没有 `ctx.compaction` 也没有 `/compact`。
-- 挂载硬约束：预设里挂 compaction **必须**在 isolate group 内，否则挂载直接失败（`dsh-agent-preset-registry/src/mount.ts:204-215`）。
-- 取引擎的路：根上下文 `ctx.get('compaction')` 取不到（根作用域 disable 了）；可行路径是 `agents.get(sessionId)` 拿 agent，再 `agent.ctx.get('compaction')` 沿父链解析到预设作用域。轮转现在只用 `sessions`，要加 `agents` 依赖。
-- `compactNow(agent, signal, commandId?)` 内部走 `agent.runMaintenance`，非 idle **同步抛**，异常一律包成 `ManualCompactionError('busy')`；事务层还要求「会话没有开着的 turn」。
-- 插一轮再压缩的可行性：`prompt()` 准入即返回（只把消息放进 inbox），没有「某条消息跑完」的 promise；能用的只有 `agent.whenIdle()`（宿主文档明确提醒它可能跨多条输入）、`agent/status`、`inbox/claimed`（带 turn）+ 该 turn 的 `turn/end`。
-- **会拦住用户消息**：gateway 在调用 `controller.prompt` 时 await 它，我们不返回那条用户消息就进不了 inbox（客户端契约允许准入阶段扣住，且没找到 prompt RPC 超时）。所以「先跑两轮再放行」在协议上可行，代价是用户看不到任何回执。
-- **一个坑**：profile 配的是 `busyEnter: steer`，agent 忙时客户端发 `steer`，而包装对 `mode !== queue` 直接放行 —— 我们插的那两轮跑起来时，用户再发消息会以 steer 注入到「更新文档」那一轮里。
+- 预设定义在 `src/nano-flow/assembly/preset.ts`（运行期由根插件 `agentPresets.register`）；挂 compaction **必须**在 `cordis:group` + `isolate` 内，否则挂载直接失败（`dsh-agent-preset-registry/src/mount.ts`）。
+- 宿主分层：`dsh-base` 挂了 `token-meter`/`compaction-basic`/`command-compact`；`dsh-web-app` 的 patch 把后两个 `disabled: true`，改由各预设在 group 内挂。nano-flow 预设原没有这个 group，所以既没有 `ctx.compaction` 也没有 `/compact`。
+- 取引擎的路：`agents.get(sessionId)` 拿 agent（session 与 agent 同 id），再 `agent.ctx.get('compaction')` 沿父链解析到预设作用域 —— 后来证明这条在 isolate 下不通，见下文「真机测试结果」的根因段。
+- **会拦住用户消息**：gateway 调用 `controller.prompt` 时 await 它，不返回那条用户消息就进不了 inbox（客户端契约允许准入阶段扣住，未找到 prompt RPC 超时）。所以「先跑两轮再放行」在协议上可行，代价是用户看不到任何回执。
+- `prompt()` 准入即返回，没有「某条消息跑完」的 promise；能用的只有 `whenIdle()`（宿主提醒它可能跨多条输入）、`agent/status`、`inbox/claimed` + 该 turn 的 `turn/end`。
 
 ## 引擎侧事实（compact-probe，2026-11-17）
 
@@ -49,19 +33,6 @@ next_step: "subagent 按四步流程重写 rotate.ts + 预设挂 compaction-basi
 - **没有「压缩前/后」钩子**。可用插点：`agent/pre-step`/`agent/request`（引擎自己用它们做自动压缩）、`compaction/summary-error`（waterfall）、`session/event`（post-commit、fire-and-forget）、手动路径结束后的 `sessions.flush`。
 - 自动压缩属于引擎自身（`compaction-basic` 的 `config.auto` 默认 true，注册在 `agent/pre-step` + `agent/request` + `agent/request-error`）。**只挂引擎不挂命令，自动压缩照旧会触发** —— 要做到「只有轮转能触发」，必须同时把 `auto: false`。
 - 既有「引擎在、命令不在」的样例：`dsh-sdk-minimal/cordis.patch.yml:61-68`。
-
-## 可实施形态（待用户确认后照做）
-
-每次触发（用户消息到达且过阈值）在**插件里串行四步**，用户消息扣在 gateway 等待：
-
-1. 注入一轮 prompt：「更新当前 Plan 的 spec.md 与 note」，等该轮 `turn/end`；
-2. `agent.ctx.get('compaction').compactNow(agent, signal)`；
-3. 注入一轮 prompt：「读 spec.md 与 notes_index.md，并执行 nano_flow_check」，等该轮结束；
-4. 放行用户消息。
-
-前置改动：预设挂 `compaction-basic`（必须在 `cordis:group` + `isolate:{compaction:true}` 内，`auto:false`），**不挂** `command-compact`；轮转依赖从 `sessions` 扩到 `agents`；`preset.test.ts` 里「不含 compaction」的断言要改。
-
-两个已知坑：①profile 是 `busyEnter: steer`，pre-step 轮跑着时用户再发消息会以 steer 注入到「更新文档」那一轮；②用户消息被扣住期间 GUI 没有任何回执，两轮可能几十秒到几分钟。
 
 ## 用户裁决（2026-11-17）
 
@@ -110,11 +81,21 @@ next_step: "subagent 按四步流程重写 rotate.ts + 预设挂 compaction-basi
 | ① 压缩前检查点 | turn 42 的输入是「轮转前检查点…」，seq 3884 `turn/end` | 桥接生效、三道 seam 可用、0.15 阈值越线 |
 | ② 压缩 | seq 3885 `compaction/start{turn:null}` → 3886 `compaction/summary` → 3887 `user/message{source.kind:compact-checkpoint}` → 3888 `compaction/end` | 宿主真的压了，摘要即 `<compacted-summary>` 全文 |
 | ③ 压缩后恢复 | seq 3890 `turn/start{turn:43}`，输入是「轮转后恢复…」；本轮已读 `spec.md`+`notes_index.md`、`nano_flow_check` 通过 | 注入轮次照常跑，文档已回填 |
-| ④ 放行用户消息 | 本轮结束后才发生 | 待验 |
+| ④ 放行用户消息 | seq 4070 `turn/end`(43, 20:33:13) → 4072 `turn/start`(44) 同一秒内接上，用户原话「我重启了」以新 rpcId 落进 turn 44 | 放行正常，共扣住 2 分 17 秒 |
 
 - 「①结束 → ②开始」间隔 23 ms，说明等待用的是同一回合的 `turn/end`，没有被别的轮次抢先。
 - 压缩触发时机是 ① 那轮结束之后、③ 开始之前，符合设计（压缩必须 phase=idle 且无开着的 turn）。
 - 摘要覆盖率：压缩前约 396k tokens 的历史被压成一段摘要 + 最后一个 surface 节点，③ 的输入因此是「系统提示 + 摘要 + 那段注入原文」——这就是为什么 ③ 必须自己重读 `spec.md` 与 `notes_index.md`。
+
+**压缩幅度（`assistant/message.usage.totalTokens`，每轮首个请求）：**
+
+| 轮 | 时刻 | totalTokens |
+| --- | --- | --- |
+| 42（压缩前检查点） | 20:31:08 | 416,569 |
+| 43（压缩后恢复） | 20:31:40 | 26,161 |
+| 44（放行的用户原话） | 20:33:22 | 55,212 |
+
+**这条路径对重启后的会话同样成立**：宿主重启后会话从日志重放，历史照旧计入压力，所以重启后的第一条消息就会触发轮转 —— 这次触发正是「我重启了」这句话本身。用户侧观感是这句话 2 分 17 秒后才出现（20:30:56 发出、20:33:13 落进 turn 44），期间 GUI 无任何回执。
 
 ## 边界
 

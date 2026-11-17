@@ -85,6 +85,8 @@ status: completed
 
 - 2026-11-17 20:32：**四步全部在日志里落到实处**（0.5.63）：seq 3884 `turn/end`(turn 42) → 3885 `compaction/start` → 3886 `compaction/summary` → 3887 `user/message{compact-checkpoint}` → 3888 `compaction/end` → 3890 `turn/start`(turn 43)。② 与 ① 相隔 23 ms，压缩确实发生在 idle 窗口；③ 这一轮已重读 `spec.md` 与 `notes_index.md` 并跑通 `nano_flow_check`。Plan 收口只差 ④（本条消息放行）。
 
+- 2026-11-17 20:34：**④ 与「重启后可用」一并确认**。seq 4070 `turn/end`(43) → 4072 `turn/start`(44) 同一秒接上，用户原话「我重启了」作为 turn 44 的输入落地 —— 放行正常，共扣住 2 分 17 秒。压缩幅度：turn 42 首个请求 416,569 tokens → turn 43 26,161 → turn 44 55,212。宿主重启后会话从日志重放、历史照旧计入压力，所以重启后的第一条消息就触发轮转。10 条 note 全 completed，等用户确认后迁 `reference`。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
