@@ -1,6 +1,6 @@
 ---
 name: '009-子仓的pnpm-workspace.yaml能整删吗'
-description: '不能整删：九个仓的 pnpm-workspace.yaml 还装着 overrides / allowBuilds / peerDependencyRules / minimumReleaseAgeExclude，pnpm 只在它这里读这些设置；只删顶上的 packages: [] 一行。'
+description: '不能整删：九个仓的 pnpm-workspace.yaml 装着 overrides / allowBuilds / peerDependencyRules / minimumReleaseAgeExclude，pnpm 只在它这里读这些设置；只删顶上的 packages: [] 一行。'
 ---
 
 # 009-子仓的pnpm-workspace.yaml能整删吗
