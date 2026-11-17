@@ -101,6 +101,21 @@ next_step: "subagent 按四步流程重写 rotate.ts + 预设挂 compaction-basi
 - `rotate.ts` 的 `targetOf` 改从槽里取桥，仍用 `agents.get(sessionId)` 取 agent 当参数；无桥时 warn 文案改为 `exposes no compaction bridge`。
 - `mount-report` 新增 `bridge` stage（`{requested, engine}`），真机验证先看它。
 
+## 真机验证（2026-11-17 20:30，重启后首次触发）
+
+四步在会话日志 `session-e09f821c…/session.v4.jsonl.zstd` 里逐条对得上（seq 为日志序号）：
+
+| 步 | 证据 | 结论 |
+| --- | --- | --- |
+| ① 压缩前检查点 | turn 42 的输入是「轮转前检查点…」，seq 3884 `turn/end` | 桥接生效、三道 seam 可用、0.15 阈值越线 |
+| ② 压缩 | seq 3885 `compaction/start{turn:null}` → 3886 `compaction/summary` → 3887 `user/message{source.kind:compact-checkpoint}` → 3888 `compaction/end` | 宿主真的压了，摘要即 `<compacted-summary>` 全文 |
+| ③ 压缩后恢复 | seq 3890 `turn/start{turn:43}`，输入是「轮转后恢复…」；本轮已读 `spec.md`+`notes_index.md`、`nano_flow_check` 通过 | 注入轮次照常跑，文档已回填 |
+| ④ 放行用户消息 | 本轮结束后才发生 | 待验 |
+
+- 「①结束 → ②开始」间隔 23 ms，说明等待用的是同一回合的 `turn/end`，没有被别的轮次抢先。
+- 压缩触发时机是 ① 那轮结束之后、③ 开始之前，符合设计（压缩必须 phase=idle 且无开着的 turn）。
+- 摘要覆盖率：压缩前约 396k tokens 的历史被压成一段摘要 + 最后一个 surface 节点，③ 的输入因此是「系统提示 + 摘要 + 那段注入原文」——这就是为什么 ③ 必须自己重读 `spec.md` 与 `notes_index.md`。
+
 ## 边界
 
 - 先给方案与代价，动手前等用户放行。

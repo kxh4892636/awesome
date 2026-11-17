@@ -81,6 +81,10 @@ status: completed
 
 - 2026-11-17 18:20：真机测试发现轮转根本没触发，根因是预设 compaction 引擎在 isolate realm 里、根半 `agent.ctx.get('compaction')` 取不到。改用**同 bundle 模块级桥**：group 内加一行本包小插件登记 `compactNow`，根半从槽里取。提交 `501e672` + `25cb215`，284 测试全过，**0.5.63** 已装；等用户重启后真机验证（看 `mount.json` 的 `stages.bridge` 与日志里的 `compaction/start|summary|end`）。
 
+- 2026-11-17 20:30：**真机首次触发**（重启后首条消息）。收到的是注入的「轮转前检查点」，即第 ① 步已跑 —— 桥接生效、三道 seam 在真机可用、0.15 阈值按预期越线。待验 ② 压缩是否真发生、③ 压缩后读文档、④ 用户消息是否放行。
+
+- 2026-11-17 20:32：**四步全部在日志里落到实处**（0.5.63）：seq 3884 `turn/end`(turn 42) → 3885 `compaction/start` → 3886 `compaction/summary` → 3887 `user/message{compact-checkpoint}` → 3888 `compaction/end` → 3890 `turn/start`(turn 43)。② 与 ① 相隔 23 ms，压缩确实发生在 idle 窗口；③ 这一轮已重读 `spec.md` 与 `notes_index.md` 并跑通 `nano_flow_check`。Plan 收口只差 ④（本条消息放行）。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
