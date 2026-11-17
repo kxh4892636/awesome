@@ -1,7 +1,7 @@
 ---
 name: "轮转保持原会话"
 description: "调研把 dsh-toolkit 的会话轮转从「新建会话 + 删除旧会话」改为「原会话内重置上下文」，让轮转后子 agent 与后台 job 继续存活，并落地实现与验收。"
-status: in_progress
+status: completed
 ---
 
 # 轮转保持原会话
@@ -63,10 +63,13 @@ status: in_progress
 
 - 2026-11-16 20:12：用户要求 Plan **迁回 active**，并提出新问题：撤回工具同样靠新建会话，能否套用在原会话内遮蔽的思路。新开 006 承接；本轮只做只读调研，动手前等放行。
 
+- 2026-11-17 10:50：用户放行「开始执行所有 NOTE」。契约先在 `src/contract.ts` 定死（`UndoTurnResponse` 去 `childSessionId`，改 `{boundary,seq,prompt}`；新增 `UndoRecallMark`），再分两条写链并行：`undo-host`（宿主半就地墓碑 + 清队列 + 修 rotate.ts 的 heuristicTokens）与 `undo-client`（visibility 隐藏 + seat 接管 + 乐观更新）。全量门禁与发布由主会话统一做。
+
+- 2026-11-17 11:05：006/007 收口。撤回改成就地墓碑 + 客户端 `visibility` 隐藏，0.5.57 已装 web profile；测试 357→395、`vp check` 0/0、build 通过。决策记入 [ADR 014](../adr/014-撤回用墓碑遮蔽而非fork.md)，问题 006 的解法同步改写。生效需重启宿主。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [006-撤回在同一会话内完成](006-撤回在同一会话内完成.md) | 撤回工具现在走新建会话，与轮转旧做法同源；调研能否复用「原会话内遮蔽历史」的思路，让撤销不换会话、不杀子 agent 与后台 job。 | in_progress | — | 用户要求「界面也要少显示 + 队列清空 + turn 回退」= fork 语义，插件层拿不到；等用户决定走宿主 rewind 能力（patch 或上游）还是先只做「清队列」这一小块 | 003-实现原会话内重置轮转, 005-拆除轮转死代码 |

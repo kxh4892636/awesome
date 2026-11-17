@@ -9,7 +9,7 @@
 | [003-desktop-profile报缺少peer](003-desktop-profile报缺少peer.md) | desktop profile 执行 pnpm peers check 时报缺少 @deepseek-ai/* peer。 |
 | [004-插件被判定incompatible](004-插件被判定incompatible.md) | dsh plugin add 输出插件与当前 DSH 版本不兼容时如何对齐声明。 |
 | [005-DSH出站流量走本机代理](005-DSH出站流量走本机代理.md) | 系统代理已开启但 DSH 的 LLM / web 搜索 / web fetch / MCP 仍直连。 |
-| [006-宿主不能原地删除或截断会话](006-宿主不能原地删除或截断会话.md) | 想让同一 session id 回到上一轮结束状态时，宿主没有原地截断能力。 |
+| [006-宿主不能原地删除或截断会话](006-宿主不能原地删除或截断会话.md) | 日志不能截断，但表面可以变短：撤回靠一条 system/message 墓碑 + surfaceOp.replace 就地遮蔽，界面再用 visibility 隐藏。 |
 | [007-恢复Plan为什么只读](007-恢复Plan为什么只读.md) | 恢复已有 Plan 时模型直接开工，未经确认就改文件或跑构建。 |
 | [008-预设出现但提示词或工具缺失](008-预设出现但提示词或工具缺失.md) | Nano Flow 预设可选，但会话里没有提示词、nano_flow_* 工具或随包 skill。 |
 | [009-第三方插件自定义会话事件导致历史加载失败](009-第三方插件自定义会话事件导致历史加载失败.md) | 插件用 session.append 写自定义事件后，宿主重启冷读会话日志会拒绝整条历史。 |

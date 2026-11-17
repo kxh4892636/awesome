@@ -121,12 +121,16 @@ _Avoid_：进度条、checkpoint
 ### 会话撤回
 
 **撤回**：
-把会话回到上一轮结束的状态并取回该轮用户原文的操作；宿主无删除/截断 API，因此以 `session/fork` 切点前缀实现，再归档、接管置顶位并彻底删除原会话（日志 + 记账 + 归档占位）。
+把会话回到上一轮结束的状态并取回该轮用户原文的操作，**就地**完成：同一会话追加一条 `system/message` 墓碑（空 content + `data.recall{boundary,end}`），带 `surfaceOp:{op:"replace"}` 覆盖切点到表面结尾，`sourceEventSeqs` 覆盖全部被遮蔽节点；会话 id、Plan 绑定、置顶位、子 agent 与后台 job 全部不变。撤回前先清掉该会话排队中的输入，否则待发消息会立刻开一轮，把刚遮蔽的历史重新长出来。
 _Avoid_：回滚、撤销历史、时间旅行
 
 **切点**：
-被撤销那一轮的 `turn/start` 之前最近的**非 inbox 记账**事件 seq，作为 fork 的闭区间边界；排队提示词先写入 `agent/inbox/*`，跳过它才不会被带进子会话。
-_Avoid_：断点、分割点
+被撤回那一轮**第一条用户消息**的 seq（该轮没有用户文本时退回第一条 assistant 消息），必须仍是表面上的 append 节点；它同时是 replace 区间的起点。早先已被遮蔽（撤回过、被压缩过）的消息不能当锚。
+_Avoid_：断点、分割点、fork 边界
+
+**界面隐藏**：
+客户端半读墓碑里的 `data.recall`，把 `boundary..end` 区间的聊天视图节点置 `visibility:"hidden"`（宿主 `isVisibleChatNode` 按它过滤），用户提问行由同 key 的 `conversation.chat.node` seat 接管后不渲染。改的是视图节点、不动事件日志：日志、导出与搜索索引里那些事件仍在（搜索按表面过滤，所以搜不到但翻得到）。
+_Avoid_：删消息、删除行、清空历史
 
 ### 插件交付
 
