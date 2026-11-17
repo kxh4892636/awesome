@@ -35,13 +35,21 @@ _Avoid_：把日常增量刷新称为全量同步
 _Avoid_：数据库、行情数据库、上游副本
 
 **上游（红色火箭）**：
-`hongsehuojian.com` 的 K 线接口（`/fundex-quote/line/kline`），日线的唯一来源；请求口径为 `period=day`、`adjust` 控制复权、`count` 控制返回根数（负数表示向前取 N 根）。
+`hongsehuojian.com` 的两个通道：K 线接口（`/fundex-quote/line/kline`）是日线的唯一来源，请求口径为 `period=day`、`adjust` 控制复权、`count` 控制返回根数（负数表示向前取 N 根）；估值接口（`/fundex-quote/index/valuation`）是估值指标的唯一来源，`valuationType` 取 `PE`/`PB`/`PS`/`DID`，`timeInterval=max` 返回上市起全部历史，匿名可调。
 _Avoid_：交易所、聚合服务、把请求参数当领域概念
 
 **看板视图状态（Dashboard View）**：
-每个证券独立的周期、范围、均线文本与虚拟均线文本，持久化在浏览器 localStorage。
-_Avoid_：把跨证券共享的工具栏状态称为看板视图状态
+每个证券独立的周期、范围、均线文本、虚拟均线文本，以及估值的可见指标与曲线范围（1 年 / 3 年 / 5 年 / 全部，独立于 K 线周期），持久化在浏览器 localStorage；旧记录缺字段时逐项回退默认。
+_Avoid_：把跨证券共享的工具栏状态称为看板视图状态、让估值曲线跟着 K 线的周期与范围走
 
 **前复权（qfq）**：
 当前支持的日线价格复权口径，使历史价格按当前价格尺度连续展示。
 _Avoid_：用上游协议参数 adjust=1 表达领域概念
+
+**估值指标（Valuation Metrics）**：
+每个指数一组 PE、PB、PS 与股息率（DID）的日频历史，取自上游估值通道（取数、入库与踩坑见 [002-估值数据接入](workflows/002-估值数据接入/002-估值数据接入.md)）；PE/PB/PS 是倍数，股息率入库统一成比率（0.0447 表示 4.47%）。每条观测带数据日期 `dataDate`，界面上按「口径日期」标注，不能拿行情最新日期冒充。
+_Avoid_：把估值当行情、在库里混存百分数与比率、把估值观测当成行情价格序列
+
+**历史分位（Historical Percentile）**：
+某个估值值在其全部历史中的位置（0–100），对应上游 `percentile` / `historicalPercentile`；上游文案「高于/低于历史 X% 时间」用的是 100 − percentile，两者不要混读。
+_Avoid_：把历史分位叫作排名、拿文案反推数值
