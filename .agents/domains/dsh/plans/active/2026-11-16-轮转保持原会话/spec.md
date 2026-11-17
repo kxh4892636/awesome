@@ -75,6 +75,8 @@ status: completed
 
 - 2026-11-17 17:00：009 完成。轮转改为调用宿主 compact：四步串行（改文档 → 压缩 → 读文档+check → 放行用户消息），预设挂 `compaction-basic`（`auto:false`，不挂 `command-compact`），`rotate.ts` 486→374 行，测试 276、check 0/0、build 通过；提交 `6530405`，**0.5.61** 已装 web profile。
 
+- 2026-11-17 17:15：`/ponytail-review` 走查 0.5.61 的轮转改动，修两处：①压缩前那一轮没跑完（超时/注入被拒）时**跳过压缩**，不再制造一次必然 `busy` 的假失败；②过阈值却取不到压缩引擎时留一条 warn（否则静默不轮转、上下文一路涨）。提交 `3a90ae0` + `df94382`，测试 276 / check 0-0 / build 通过，**0.5.62** 已装。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
