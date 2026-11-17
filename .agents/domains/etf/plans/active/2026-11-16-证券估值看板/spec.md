@@ -1,7 +1,7 @@
 ---
 name: "2026-11-16-证券估值看板"
 description: "在看板增加 PE、PB、PS 与股息率四项估值指标：先确认上游口径与历史深度，落存储与接口，再做卡片与曲线。"
-status: in_progress
+status: completed
 ---
 
 # 证券估值看板
@@ -55,7 +55,14 @@ status: in_progress
 - 2026-11-16：002/003 完成：`security_valuation` 长表 + 迁移 0002、上游 client、repository、`sync:valuation` 回填（930955.CSI 4×2299 行，2017-05-26 → 2026-11-13）、`GET /api/valuations`；`pnpm test` 202 例全绿。
 - 2026-11-16：004/005 完成：看板估值卡片（四格读数 + 口径日期 + 成立以来分位刻度）与分位曲线（共享时间轴、1/3/5 年与全部、指标可点选显隐），视图状态按证券持久化并向后兼容旧 storage。证据：`pnpm test` 221 例全绿、`tsc --noEmit` 通过、sloplint 0 FAIL / 0 REFLEX / 0 WARN（`--scope app --render --url`），截图在 `.hallmark/valuation/`。
 - 2026-11-16：007 完成：etf 域新增 [002-估值数据接入](../../../workflows/002-估值数据接入/002-估值数据接入.md)（取数/入库/回填/接口/9 条坑），CONTEXT「估值指标」词条挂链。取证：`pnpm run sync:valuation` 退出码 0、930955.CSI 4×2299（2017-05-26→2026-11-13）、932315.CSI 4×571（2024-07-08→2026-11-13）、库内 11480 行；`/api/valuations?symbol=930955.CSI` 561694 字节。任务给的「561 KB = 2 指数 × 4 指标」与实测不符（单只证券即 561 KB），文档按实测写。
+- 2026-11-17：008 完成：估值区移到 K 线下方，改成两块与 K 线同宽同距的卡片——上面板是范围 Segmented + 2×2 可选中读数面板（原生 button + aria-pressed，选中态用 accent 竖线），下面板是所选指标的分位折线，口径日期在下面板 extra。视图状态由「可见指标集合」改为 `valuationMetric` 单选（默认 pe），旧的集合字段按缺字段回退。证据：`pnpm test` 220 例全绿、`tsc --noEmit` 与 `typecheck:e2e` 通过、`test:e2e` 7 组全绿（27.3s）、sloplint 0 FAIL / 0 WARN / 2 WAIVED（`--scope app --render --url`），截图在 `.hallmark/valuation/valuation-panels-*`。
 - 2026-11-16：006 完成：估值 fixture 与 S7 旅程上线（12 点/指标、末行 2025-06-03），S5 悬停前先滚动画布；README 修掉 `apps/etf` / 根 `dev:etf` / `workflows/0001` 三处陈旧表述并补估值接口与 `sync:valuation`，CONTEXT 估值词汇核对一致未改。证据：`pnpm test` 221 例、`typecheck:e2e` 通过、`test:e2e` 7 组全绿（25.6s），截图 `e2e/evidence/s7-valuation.png`。
+
+- 2026-11-17：008 完成并补笔：估值区移至 K 线下方为双面板（范围 + 四格读数 / 单条分位线）；四格读数补两侧留白，刻度条不再贴卡片边缘。
+
+- 2026-11-17：估值折线悬停提示的分位改为保留两位小数（读数仍取整），单测同步。
+
+- 2026-11-17：CR 修复：补拉冷却（同证券 10 分钟）、首屏未选标的时按加载态而非空态、去掉未用的 refetch；单测 223、E2E 7 组全绿。
 
 ## 追踪 Note
 
@@ -63,4 +70,3 @@ status: in_progress
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [008-估值区改为K线下方双面板](008-估值区改为K线下方双面板.md) | 估值区移到 K 线下方，改成与 K 线一致的双面板：上为范围与四指标选中态，下为所选指标的分位折线。 | pending | — | 派前端按双面板重构估值区，并同步状态、测试与 E2E | 004-看板估值卡片, 005-估值曲线与视图状态, 006-E2E与文档收口 |
