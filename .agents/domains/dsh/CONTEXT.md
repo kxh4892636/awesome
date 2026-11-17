@@ -129,7 +129,7 @@ _Avoid_：回滚、撤销历史、时间旅行
 _Avoid_：断点、分割点、fork 边界
 
 **界面隐藏**：
-客户端半读墓碑里的 `data.recall`，把 `boundary..end` 区间的聊天视图节点置 `visibility:"hidden"`（宿主 `isVisibleChatNode` 按它过滤），用户提问行由同 key 的 `conversation.chat.node` seat 接管后不渲染。改的是视图节点、不动事件日志：日志、导出与搜索索引里那些事件仍在（搜索按表面过滤，所以搜不到但翻得到）。
+客户端半读墓碑里的 `data.recall`（含 `sessionId`），把**当前会话**里 `boundary..end` 区间的聊天视图节点置 `visibility:"hidden"`（宿主 `isVisibleChatNode` 按它过滤）；用户提问行也走这条定义层通道，不抢 `conversation.chat.node` 的 seat（抢了会掉宿主的装饰链）。区间按会话隔离，当前会话未知时不隐藏。改的是视图节点、不动事件日志：日志、导出与搜索索引里那些事件仍在（搜索按表面过滤，所以搜不到但翻得到）。
 _Avoid_：删消息、删除行、清空历史
 
 ### 插件交付

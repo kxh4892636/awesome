@@ -67,6 +67,8 @@ status: completed
 
 - 2026-11-17 11:05：006/007 收口。撤回改成就地墓碑 + 客户端 `visibility` 隐藏，0.5.57 已装 web profile；测试 357→395、`vp check` 0/0、build 通过。决策记入 [ADR 014](../adr/014-撤回用墓碑遮蔽而非fork.md)，问题 006 的解法同步改写。生效需重启宿主。
 
+- 2026-11-17 11:25：`/ponytail-review` 走查撤回改动，修两处：①已撤回区间表按会话隔离（墓碑 `data.recall` 带 `sessionId`，活动会话由撤回按钮提供），否则 A 会话撤回会让 B 会话同 seq 的行消失；②删掉多余的 `conversation.chat.node` user 座位接管（定义层 `visibility` 已覆盖用户行，抢座位反而掉装饰链），净 −109 行。测试 394 / `vp check` 0/0 / build 通过，提交 `3d479c2` + `7c477aa`，**0.5.58** 已装 web profile。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->

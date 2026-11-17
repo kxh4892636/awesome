@@ -23,8 +23,9 @@ status: accepted
 ## 后果
 
 - 撤回后 turn 号不回退、消息编号不回退、`<plan>/log.jsonl` 里被撤回那轮的行不删。
+- **撤回不杀活体**：后台 job 与子 agent 继续跑（旧实现靠归档广播 `workspace/session-stop` 连它们一起杀）。撤不回的是副作用，不是这些进程。它们的完成通知走续跑通道（`dsh-subagent/src/continuation-messages.ts` 注入的 user 消息），不是 `queue`，所以撤回清队列清不到它们 —— 通知会落在已被遮蔽的历史上，模型看到「job 完成了」却看不到当初为什么起它。只有「正在跑一轮」会被 409 `agent-busy` 挡住。
 - 不写 `compaction/prune`，所以上下文占用会在下一次真实压缩前虚高。
-- 界面隐藏依赖两条未公开行为：改写其它 definition 的 `buildViewNode`、抢 `conversation.chat.node` 的 `user` seat；宿主升级时先看这两处。
+- 界面隐藏只剩一条未公开行为：改写其它 definition 的 `buildViewNode`（不抢 `conversation.chat.node` 的 seat —— 用户行同样由定义层的 `visibility` 覆盖，抢座位反而会掉宿主 user 行的装饰链）。命中依赖「撤回按钮至少渲染过一次」提供当前会话 id，区间按会话隔离。
 - 旧删除式撤回留下的 `hiddenSessionIds` / `pendingDeletes` 只保留为启动自愈路径，新撤回不再写。
 - 附件不回填，只回填文本。
 
