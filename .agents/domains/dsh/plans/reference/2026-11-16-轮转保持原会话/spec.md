@@ -89,6 +89,8 @@ status: completed
 
 - 2026-11-17 20:40：用户手改压缩前提示词（去掉「进度、证据、下一步」），连带删掉 `rotate.test.ts` 里 pin「下一步」的断言；284 测试全过、check 0/0、build 通过，提交 `9a39334`，**0.5.64** 已装 web profile，重启生效。
 
+- 2026-11-17 20:45：**Plan 迁 `reference`**（用户确认）。10 条 note 全 completed；跨域链接 `questions/016` 改指新路径，`questions/006` 的「验证」段同步为现状（手写 `surfaceOp.replace` 的实现已删，现由 compact 引擎兑现）。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
