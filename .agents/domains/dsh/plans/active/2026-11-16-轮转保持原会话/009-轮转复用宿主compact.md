@@ -84,6 +84,23 @@ next_step: "subagent 按四步流程重写 rotate.ts + 预设挂 compaction-basi
 
 遗留风险（写进 CONTEXT）：等待只能认「注入后第一个 `turn/end`」，若期间有别的轮次先结束会提前开跑压缩 → `busy` → 只 warn（自愈但难查）；`busyEnter: steer` 会把用户消息注入插入的那两轮；用户消息被扣期间无回执，客户端中断会让它不入 inbox。
 
+## 真机测试结果（2026-11-17 18:05，宿主 17:49 重启，0.5.62，rotateAt=0.15）
+
+**没触发。** 证据：`nano-flow-mount.json` 的 `rotation` 段四个 seam 全 true（`tokenMeter/agents/sessionController/waitForTurnEnd`）；会话里 `turn/start` 40 条、`turn/end` 39 条（唯一未闭合的是当前这一轮）；上一条请求 `totalTokens` ≈ 396k ≫ 150k 阈值；但会话日志里**既没有任何 `轮转前检查点` / `轮转后恢复` 注入，也没有新的 `compaction/*` 事件**。
+
+**根因：isolate realm。** 预设里 `compaction-basic` 必须挂在 `cordis:group` + `isolate:{compaction:true}` 内，而 isolate 会把服务发布在**realm 私有 symbol** 下（`dsh-agent-preset-registry/src/mount.ts:60-86` 的 `leakedServices` 注释写明：isolate 内的 provider 在根 store 里"correctly absent"）。agent 的 ctx 绑在**预设作用域**（group 的父级），所以 `agent.ctx.get('compaction')` 解析不到引擎 → `targetOf` 返回 undefined → 0.5.62 加的那条 warn 触发（打到宿主 stderr，我们没有日志文件可读）。宿主自己的 `command-compact` 也是挂在**同一个 group 内**才看得到引擎，印证了"消费者必须在同一 realm"。
+
+**修法（待做）**：同一 bundle 被挂两次共享模块级状态 —— 在 compaction group 内加一个本包的小 row（`compactBridgeOnly`），它 `inject:['compaction']` 后把 `(agent, signal) => ctx.compaction.compactNow(agent, signal)` 注册进模块级槽；根半的轮转从槽里取用。服务不跨 realm，但同一模块的变量跨 realm。
+
+## 桥接修复（2026-11-17，0.5.63）
+
+提交 `501e672` + `25cb215`，284 测试 / `vp check` 0-0 / build 通过，已装 web profile。
+
+- 新增 `src/nano-flow/assembly/compaction-bridge.ts`：模块级槽 `setCompactionBridge/clearCompactionBridge/getCompactionBridge`，登记时返回撤销函数且**只在槽里仍是自己时清空**（preset 按会话各挂一次，先卸载的不该抹掉后注册的）。
+- 预设的 compaction group 内加第二行 `nano-flow-compaction-bridge`（`name: entryUrl`，与顶层 `nano-flow` 行同一个模块文件），`inject:['compaction']` 后把 `(agent, signal) => engine.compactNow(agent, signal)` 登记进槽。
+- `rotate.ts` 的 `targetOf` 改从槽里取桥，仍用 `agents.get(sessionId)` 取 agent 当参数；无桥时 warn 文案改为 `exposes no compaction bridge`。
+- `mount-report` 新增 `bridge` stage（`{requested, engine}`），真机验证先看它。
+
 ## 边界
 
 - 先给方案与代价，动手前等用户放行。

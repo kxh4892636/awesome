@@ -77,6 +77,10 @@ status: completed
 
 - 2026-11-17 17:15：`/ponytail-review` 走查 0.5.61 的轮转改动，修两处：①压缩前那一轮没跑完（超时/注入被拒）时**跳过压缩**，不再制造一次必然 `busy` 的假失败；②过阈值却取不到压缩引擎时留一条 warn（否则静默不轮转、上下文一路涨）。提交 `3a90ae0` + `df94382`，测试 276 / check 0-0 / build 通过，**0.5.62** 已装。
 
+- 2026-11-17 18:00：用户报历史加载失败（session-e09f）。根因是 0.5.57 撤回墓碑写在 `turn/end` 之后，v4 冷读判 `system/message does not match an open turn and step`。新开 010：三条墓碑移回所属回合最后一个 step 内并重排 seq，日志恢复可加载；规则记入问题 016。
+
+- 2026-11-17 18:20：真机测试发现轮转根本没触发，根因是预设 compaction 引擎在 isolate realm 里、根半 `agent.ctx.get('compaction')` 取不到。改用**同 bundle 模块级桥**：group 内加一行本包小插件登记 `compactNow`，根半从槽里取。提交 `501e672` + `25cb215`，284 测试全过，**0.5.63** 已装；等用户重启后真机验证（看 `mount.json` 的 `stages.bridge` 与日志里的 `compaction/start|summary|end`）。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
