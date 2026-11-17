@@ -71,6 +71,10 @@ status: completed
 
 - 2026-11-17 12:05：用户决定**不要撤回功能**，008 整体移除：17 文件、净 −4757 行，测试 394→276，代码零残余（grep 空），0.5.60 已装 web profile 并推送。域文档同步：CONTEXT 删三条词条、ADR 014 删除、问题 006 改写为「表面可短」留给轮转。
 
+- 2026-11-17 16:50：用户要求轮转改为复用宿主 compact（不暴露 `/compact`），压缩前后各插一步固定动作。调研确认可行：手动压缩只保留最后一个 surface 节点、需真 Agent 且 phase 恰为 idle、无前后钩子但我们是调用方；用户批准 `auto:false` 与全部代价。009 进入执行，由 `rotate-on-compact` 重写实现与预设。
+
+- 2026-11-17 17:00：009 完成。轮转改为调用宿主 compact：四步串行（改文档 → 压缩 → 读文档+check → 放行用户消息），预设挂 `compaction-basic`（`auto:false`，不挂 `command-compact`），`rotate.ts` 486→374 行，测试 276、check 0/0、build 通过；提交 `6530405`，**0.5.61** 已装 web profile。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->
