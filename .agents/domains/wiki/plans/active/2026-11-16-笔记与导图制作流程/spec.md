@@ -76,6 +76,7 @@ status: pending
 
 - 2026-11-16：克隆 `repos/wiki`（此前只有 `repos/dsh-toolkit`），main 最新 `8a2c45d`；建立 Plan 并绑定会话。
 - 2026-11-16：按用户要求删除 5 条预设 note；note 改为按用户输入创建，当前 0 条。
+- 2026-11-17：确认导图使用手册在 `repos/dsh-toolkit/src/nano-flow/skills/learning/MINDMAP.md`；按用户要求删除同目录 `RULE.md`，SKILL.md 与 MINDMAP.md 的引用同步改掉。改动只在 dsh-toolkit 工作区，未提交。
 
 ## 追踪 Note
 
