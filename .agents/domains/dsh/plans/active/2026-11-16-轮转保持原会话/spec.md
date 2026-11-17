@@ -69,6 +69,8 @@ status: completed
 
 - 2026-11-17 11:25：`/ponytail-review` 走查撤回改动，修两处：①已撤回区间表按会话隔离（墓碑 `data.recall` 带 `sessionId`，活动会话由撤回按钮提供），否则 A 会话撤回会让 B 会话同 seq 的行消失；②删掉多余的 `conversation.chat.node` user 座位接管（定义层 `visibility` 已覆盖用户行，抢座位反而掉装饰链），净 −109 行。测试 394 / `vp check` 0/0 / build 通过，提交 `3d479c2` + `7c477aa`，**0.5.58** 已装 web profile。
 
+- 2026-11-17 12:05：用户决定**不要撤回功能**，008 整体移除：17 文件、净 −4757 行，测试 394→276，代码零残余（grep 空），0.5.60 已装 web profile 并推送。域文档同步：CONTEXT 删三条词条、ADR 014 删除、问题 006 改写为「表面可短」留给轮转。
+
 ## 追踪 Note
 
 <!-- 由 nano_flow_check 生成，请勿手改 -->

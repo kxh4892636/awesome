@@ -10,7 +10,7 @@ metadata:
 
 # DSH
 
-工作区自研 DeepSeek Harness 扩展的业务域：以独立插件包承载一组可独立开关的工具（嵌套 skill 发现、会话撤回、office 技能屏蔽等），并提供 Nano Flow Agent 预设，与上游仓库解耦。
+工作区自研 DeepSeek Harness 扩展的业务域：以独立插件包承载一组可独立开关的工具（嵌套 skill 发现、office 技能屏蔽等），并提供 Nano Flow Agent 预设，与上游仓库解耦。
 
 ## Language
 
@@ -101,7 +101,7 @@ nano-flow 预设会话在输入框上方 dock 显示的 note 面板（中文状�
 _Avoid_：待办面板、todo 面板、任务列表
 
 **Plan 轨迹日志**：
-nano-flow 预设会话每轮结束时向 `<plan>/log.jsonl` 追加的一条 compact 轨迹（user、assistant 最终文本、工具参数/结果摘要、usage、seq 区间）；绑定只由 `nano_flow_bind` 与轮转过继写（[ADR 009](adr/009-Plan绑定只经bind工具.md)、[013](adr/013-轮转把Plan绑定过继给新会话.md)），未绑定时服务只跟踪事件、不落盘；绑定后写当前轮与后续轮次，绑定前已完成的轮次不回填；切换后后续轮次写新 Plan，旧 Plan 不再追加。启动时从宿主持久化日志回填已绑定且归该 Plan 的历史轮次，绝不写会话事件。日志只存本地（`.gitignore` 忽略 `**/plans/**/log.jsonl`），轮转不删、只增量追加。会话被删除或撤回时轨迹服务关掉该会话的读句柄并丢掉状态，迟到事件不再重建，句柄不随轮转累积。
+nano-flow 预设会话每轮结束时向 `<plan>/log.jsonl` 追加的一条 compact 轨迹（user、assistant 最终文本、工具参数/结果摘要、usage、seq 区间）；绑定只由 `nano_flow_bind` 与轮转过继写（[ADR 009](adr/009-Plan绑定只经bind工具.md)、[013](adr/013-轮转把Plan绑定过继给新会话.md)），未绑定时服务只跟踪事件、不落盘；绑定后写当前轮与后续轮次，绑定前已完成的轮次不回填；切换后后续轮次写新 Plan，旧 Plan 不再追加。启动时从宿主持久化日志回填已绑定且归该 Plan 的历史轮次，绝不写会话事件。日志只存本地（`.gitignore` 忽略 `**/plans/**/log.jsonl`），轮转不删、只增量追加。会话被宿主删除后事件自然停止；读句柄只在服务 dispose 时统一关闭，不随轮转累积。
 _Avoid_：会话转录、原始事件日志、audit log
 
 ### 记忆维护（dream）
@@ -117,20 +117,6 @@ _Avoid_：自动复盘、kaizen、离线批处理
 **dream 游标**：
 `$DSH_HOME/toolkit/nano-flow-dream.json`（v2）按「Plan + 会话」记录已处理到的 turn seq 上界；只由 `nano_flow_dream` 的 `mark` 动作在 `git commit` 成功后推进（实现是随包 `dream-scan.mjs`），重复投递靠它保持幂等。seq 换会话会重新计数，所以旧 v1 的 Plan 级 `lastSeq` 一律当空游标全量处理。
 _Avoid_：进度条、checkpoint
-
-### 会话撤回
-
-**撤回**：
-把会话回到上一轮结束的状态并取回该轮用户原文的操作，**就地**完成：同一会话追加一条 `system/message` 墓碑（空 content + `data.recall{boundary,end}`），带 `surfaceOp:{op:"replace"}` 覆盖切点到表面结尾，`sourceEventSeqs` 覆盖全部被遮蔽节点；会话 id、Plan 绑定、置顶位、子 agent 与后台 job 全部不变。撤回前先清掉该会话排队中的输入，否则待发消息会立刻开一轮，把刚遮蔽的历史重新长出来。
-_Avoid_：回滚、撤销历史、时间旅行
-
-**切点**：
-被撤回那一轮**第一条用户消息**的 seq（该轮没有用户文本时退回第一条 assistant 消息），必须仍是表面上的 append 节点；它同时是 replace 区间的起点。早先已被遮蔽（撤回过、被压缩过）的消息不能当锚。
-_Avoid_：断点、分割点、fork 边界
-
-**界面隐藏**：
-客户端半读墓碑里的 `data.recall`（含 `sessionId`），把**当前会话**里 `boundary..end` 区间的聊天视图节点置 `visibility:"hidden"`（宿主 `isVisibleChatNode` 按它过滤）；用户提问行也走这条定义层通道，不抢 `conversation.chat.node` 的 seat（抢了会掉宿主的装饰链）。区间按会话隔离，当前会话未知时不隐藏。改的是视图节点、不动事件日志：日志、导出与搜索索引里那些事件仍在（搜索按表面过滤，所以搜不到但翻得到）。
-_Avoid_：删消息、删除行、清空历史
 
 ### 插件交付
 
