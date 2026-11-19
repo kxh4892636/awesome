@@ -1,5 +1,5 @@
 ---
-name: "dream扫描纳入plan与领域文档"
+name: "dream维护纳入存量与盘点"
 description: "scan 同时给增量 turn 与全部 active+reference 的 Plan 和领域文档盘点；无增量也维护领域文档；dream 可把无用的 reference Plan 迁入 archived。"
 status: completed
 ---
