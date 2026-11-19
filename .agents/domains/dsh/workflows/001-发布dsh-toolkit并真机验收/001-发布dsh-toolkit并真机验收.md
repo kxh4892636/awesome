@@ -37,6 +37,7 @@ description: '改动 repos/dsh-toolkit 后要装进本机宿主时：先 check/t
 - desktop profile 跑 boot 类命令报独占托管错误时，先确认宿主没在占用该 profile。
 - 客户端半必须把 `react` / `react-dom` 与 UI 基座保持为外部依赖，自带一份会拆开 hook 上下文。
 - 预设挂的是 PTC 执行器：宿主 bundle 没挂 `code-runtime`（`dsh-ptc-runtime-node`）时，预设激活会直接失败（旧选型器是回退继承）。装前先确认宿主有这个运行时。
+- profile 的依赖是 `file:` 指向具体 tgz（如 `…-0.5.65.tgz`）：换版本必须 `dsh plugin --profile web remove @kxh4892636/dsh-toolkit` 再 `add` 新 tgz。直接 `add` 新版本时 pnpm 会先解析旧 spec，旧 tgz 已被删就报 `ENOENT` 并连带失败（2026-11-18 实测）。
 - 提示词与 client bundle 都随宿主启动读入：只装包不重启，看到的是旧行为。
 - 两个 profile 的安装版本会分叉（2026-11-13：desktop 0.5.51、web 0.5.52）：验收按实际跑宿主的那个 profile 核对版本，另一边的版本不能当证据。
 - 单测在 Windows 上跑：断言里的路径必须用 `fileURLToPath` 与 `join` 构造，写 POSIX 字面量会假红（[015](../../questions/015-Windows上单测假红的两处平台假设.md)）。

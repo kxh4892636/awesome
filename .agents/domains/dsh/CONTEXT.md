@@ -111,7 +111,7 @@ nano-flow 记忆的四层：L0 `<plan>/log.jsonl` 轨迹、L1 note 的结论、L
 _Avoid_：记忆库、知识图谱、第五层
 
 **dream**：
-后台记忆维护回合：宿主定时任务把 `dream/prompt.md` 全文（发布布局 `dist/nano-flow/prompts/dream.md`）投递到新建的 nano-flow 会话，按游标把 `log.jsonl` 的新轮次做纠错、提炼、建链、晋升、剪枝，落到领域文档与 `GUIDE.md`。
+后台记忆维护回合：随包技能 `skills/dream/SKILL.md`（2026-11-19 起从 `dream/prompt.md` 搬来，`disable-model-invocation`，只能人工或定时任务点名调用），宿主定时任务只投一句「调用 dream 技能」到新建的 nano-flow 会话；按游标把 `log.jsonl` 的新轮次做纠错、提炼、建链、晋升、剪枝，落到领域文档与 `GUIDE.md`。
 _Avoid_：自动复盘、kaizen、离线批处理
 
 **dream 游标**：
