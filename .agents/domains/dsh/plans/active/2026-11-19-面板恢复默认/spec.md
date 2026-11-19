@@ -1,7 +1,7 @@
 ---
 name: "面板恢复默认"
 description: "toolkit 面板的 Nano Flow 设置支持整组与单字段恢复默认值。"
-status: in_progress
+status: completed
 ---
 
 # 面板恢复默认
@@ -46,4 +46,3 @@ toolkit 侧边栏面板的「Nano Flow 设置」有 9 个数值（spec / note / 
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [001-面板恢复默认与单字段重置](001-面板恢复默认与单字段重置.md) | 设置区加「恢复默认」按钮与每框恢复图标；默认值改为 144 字、GUIDE 21 KB、轮转 0.55。 | blocked | 0.5.74 已装进 web profile，宿主仍跑旧 bundle；重启 dsh web 后才能真机验收。 | 重启 web profile 宿主，打开 toolkit 面板点「恢复默认」与框内图标验收 | — |
