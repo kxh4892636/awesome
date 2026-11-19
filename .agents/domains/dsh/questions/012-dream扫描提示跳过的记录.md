@@ -27,7 +27,7 @@ description: 'scan 报告的「需要留意」大多来自 pi 的 run 轨迹：d
 
 ## 验证
 
-- 用 `bash` + python3 打首行：pi 是 `run` + `entries`，dsh 是 `session` / `turn`。
+- 用 shell（本机 pwsh）调 python3 打首行：pi 是 `run` + `entries`，dsh 是 `session` / `turn`。
 - 无跳过时该段不出现。
 
 ## 相关

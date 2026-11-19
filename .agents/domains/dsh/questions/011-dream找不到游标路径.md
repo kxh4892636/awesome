@@ -21,7 +21,7 @@ nano-flow 会话按提示词调 `nano_flow_dream({ action: "scan" })` 直接失�
 
 ## 解决
 
-1. 用 `bash` 确认宿主 home：`echo $DSH_HOME`（本机为 `~/.dsh`）。
+1. 用能继承环境变量的 shell 确认宿主 home：本机是 pwsh，读 `$env:DSH_HOME`（`C:\Users\kxh\.dsh`）；本机 PATH 上没有 `bash`，`echo $DSH_HOME` 那条抄不动。
 2. `scan` 与 `mark` 都显式传绝对路径：`statePath: "<home>/.dsh/toolkit/nano-flow-dream.json"`。
 3. 不要在提示词里写死 profile 路径——工具参数化就是为此。
 

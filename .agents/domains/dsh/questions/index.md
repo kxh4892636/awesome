@@ -20,3 +20,4 @@
 | [014-轮转为何绑定到已归档Plan](014-轮转为何绑定到已归档Plan.md) | 轮转继承的绑定只按目录存在判断可用，Plan 迁 reference 后残留目录会让新会话恢复已归档 Plan；旧版自动绑定与 mkdir 重建是源头。 |
 | [015-Windows上单测假红的两处平台假设](015-Windows上单测假红的两处平台假设.md) | dsh-toolkit 在 Windows 上跑 test 假红：layering 用 URL.pathname 取源码目录得到 /C:/…，plan-log 用 POSIX 字面量做预期路径、与 join 结果不等；两处都改成平台无关写法。 |
 | [016-回合外墓碑会让会话日志加载失败](016-回合外墓碑会让会话日志加载失败.md) | 在 turn/end 之后追加空内容 system/message 墓碑，写入时能过、冷读时 v4 关系校验判整条历史损坏；修复要把它挪回所属回合最后一个 step 内并重排 seq。 |
+| [017-定时投递的dream取不到技能](017-定时投递的dream取不到技能.md) | 定时任务投递的消息 source.kind 是 schedule，技能手势只认 user、skill 工具又拒 disable-model-invocation，于是定时轮 dream 取不到技能、维护不跑。 |

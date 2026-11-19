@@ -1,12 +1,14 @@
 ---
 name: '007-dream由宿主定时任务投递新会话'
-description: 'dream 由宿主 Schedule 每日把 dream.md 投到新建的 nano-flow 会话，不内建定时器；游标让至少一次投递变幂等。'
+description: 'dream 由宿主 Schedule 每日把 dream 指令投到新建的 nano-flow 会话，不内建定时器；游标让至少一次投递变幂等。'
 status: accepted
 ---
 
 # 007-dream由宿主定时任务投递新会话
 
-dream 不是插件代码里的后台定时器，而是一条 DSH 自动化任务：标题 `nano-flow dream`，每天 08:00（Asia/Shanghai）把 `prompts/dream.md` 全文投递到一个**新建的** nano-flow 会话，由该会话的模型按指令跑五个 pass。任务与时间都存在宿主 Schedule 存储里，「自动化任务」页面可改，不进插件设置、不发版。
+dream 不是插件代码里的后台定时器，而是一条 DSH 自动化任务：标题 `nano-flow dream`，每天 08:00（Asia/Shanghai）把 dream 指令投递到一个**新建的** nano-flow 会话（原为 `prompts/dream.md` 全文，该文件已于 2026-11-19 删除，见下方纠正），由该会话的模型按指令跑五个 pass。任务与时间都存在宿主 Schedule 存储里，「自动化任务」页面可改，不进插件设置、不发版。
+
+> 纠正（2026-11-19，[001-新增backup-plan手工技能](../plans/reference/2026-11-19-dream与backup技能化/001-新增backup-plan手工技能.md)、[004-单测与发布验收](../plans/reference/2026-11-19-dream维护纳入存量与盘点/004-单测与发布验收.md)）：投递内容已不是 `prompts/dream.md`——该文件随 0.5.76 删除，dream 指令搬成随包 skill `skills/dream/SKILL.md`，任务 prompt 换成 `/dream …`。而落进新会话的这条消息 `source.kind` 是 `schedule`（`@deepseek-ai/dsh-schedule/lib/index.js:1387`、`:2561`），技能手势扫描只受理 `user`（`@deepseek-ai/dsh-tool-skill/lib/index.js:1120`），`skill` 工具对 `disable-model-invocation` 的技能直接抛错（同文件 `:876-879`，2026-11-19 真机实测）。结论：**定时轮加载不到 dream 技能，维护实际不跑**；只有人工 `/dream` 生效，出路见 [question 017](../questions/017-定时投递的dream取不到技能.md)。
 
 ## Considered Options
 
@@ -27,3 +29,4 @@ dream 不是插件代码里的后台定时器，而是一条 DSH 自动化任务
 
 - [023-dream指令与自动化接入](../plans/archived/2026-11-08-nano-flow重构与dsh迁移/023-dream指令与自动化接入.md) — 任务配置与首次创建记录，含创建即投递的异常观察。
 - [019-dream机制设计](../plans/archived/2026-11-08-nano-flow重构与dsh迁移/019-dream机制设计.md) — 运行形态、游标与五 pass 的完整设计。
+- [017-定时投递的dream取不到技能](../questions/017-定时投递的dream取不到技能.md) — 本决策在 0.5.78 上的断点：定时投递的消息打不开技能。

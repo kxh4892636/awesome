@@ -49,7 +49,7 @@ _Avoid_：删除 office 技能、卸载 office 插件
 ### Nano Flow 预设
 
 **nano-flow 预设**：
-本插件声明的 Agent 预设；选中它的会话才在预设作用域内挂载固定提示词、`GUIDE.md` 快照、篇幅限制块、四个 `nano_flow_*` 工具（create / check / bind / dream）与随包 skill。工具以 PTC 形态呈现：预设直接挂 `dsh-tool-executor-ptc`，不挂已弃用的呈现选型器（[ADR 011](adr/011-预设挂PTC执行器.md)）。提示词与模板与 pi 版同源（2026-11-13 整体搬回）；2026-11-13 起随包 skill 只剩 code-spec / learning / ponytail / ponytail-audit / ponytail-review / to-skill——ask、do 两个流程 skill 随 pi 删除，流程规则只由提示词与模板承担；2026-11-16 加 `ap`（async plan，由 `pp` 改名）与 `ad`（async do）两个并行 skill：都用 subagent 干活、不阻塞主会话，`ap` 只读调研、`ad` 读写执行，两者与 learning、ponytail-audit 一样只可手调（`disable-model-invocation`）；`ponytail` 相反，可由模型自动选中，指「最小改动 + 一次读懂」的编码风格，`ponytail-review` 用来审一处改动。
+本插件声明的 Agent 预设；选中它的会话才在预设作用域内挂载固定提示词、`GUIDE.md` 快照、篇幅限制块、四个 `nano_flow_*` 工具（create / check / bind / dream）与随包 skill。工具以 PTC 形态呈现：预设直接挂 `dsh-tool-executor-ptc`，不挂已弃用的呈现选型器（[ADR 011](adr/011-预设挂PTC执行器.md)）。提示词与模板与 pi 版同源（2026-11-13 整体搬回）；2026-11-13 起随包 skill 只剩 code-spec / learning / ponytail / ponytail-audit / ponytail-review / to-skill——ask、do 两个流程 skill 随 pi 删除，流程规则只由提示词与模板承担；2026-11-16 加 `ap`（async plan，由 `pp` 改名）与 `ad`（async do）两个并行 skill：都用 subagent 干活、不阻塞主会话，`ap` 只读调研、`ad` 读写执行，两者原本只可手调，但它们的 `agents/openai.yaml` 的 `policy.allow_implicit_invocation: false` 在 DSH 里不生效——DSH 只认 frontmatter 的 `disable-model-invocation`（[question 013](questions/013-随包skill缺description被静默丢弃.md)），所以 `ap` / `ad` 实际仍可被模型选中；`learning`、`ponytail-audit` 带该字段，才算真手调；`ponytail` 相反，可由模型自动选中，指「最小改动 + 一次读懂」的编码风格，`ponytail-review` 用来审一处改动。2026-11-19 再加两个手调 skill：`dream`（由 `dream/prompt.md` 整体搬成技能，承载同一套五步维护循环）与 `backup-plan`（按整体内容重命名当前 Plan 并归档，`reference` 还是 `archived` 由用户定）。
 _Avoid_：流程开关、nano-flow 命令行
 
 **固定提示词**：
@@ -111,8 +111,10 @@ nano-flow 记忆的四层：L0 `<plan>/log.jsonl` 轨迹、L1 note 的结论、L
 _Avoid_：记忆库、知识图谱、第五层
 
 **dream**：
-后台记忆维护回合：随包技能 `skills/dream/SKILL.md`（2026-11-19 起从 `dream/prompt.md` 搬来，`disable-model-invocation`，只能人工或定时任务点名调用；同日按 `to-skill` 重写成一个维护循环「取输入 → 定范围 → 维护 → 归档 → 收尾」，细则下沉到 `reference/`），宿主定时任务只投一句「调用 dream 技能」到新建的 nano-flow 会话。一轮的输入是 scan 给的三样：游标之后的新 turn（**新证据**，新结论只从这里来）、每域全部 `active` + `reference` 的**存量 Plan**（spec 状态、note 完成数、轨迹字节）、**领域文档盘点**（规模、时间、`index` 齐备、以及「域文档可能落后」标记）；没有新证据的轮次照样按标记复核该域并出结论。五个 pass（纠错、提炼、建链、晋升、剪枝）落到领域文档与 `GUIDE.md`；`reference` 中判定无用的 Plan 由 dream 迁 `archived`（结论已上浮 + note 全 completed + 无唯一出处，三条同时成立，单次最多 3 个，`active` 不自动归档）。
+后台记忆维护回合：随包技能 `skills/dream/SKILL.md`（2026-11-19 起从 `dream/prompt.md` 搬来，`disable-model-invocation`，只能人工点名调用；同日按 `to-skill` 重写成一个维护循环「取输入 → 定范围 → 维护 → 归档 → 收尾」，细则下沉到 `reference/`），宿主定时任务只投一句「调用 dream 技能」到新建的 nano-flow 会话。一轮的输入是 scan 给的三样：游标之后的新 turn（**新证据**，新结论只从这里来）、每域全部 `active` + `reference` 的**存量 Plan**（spec 状态、note 完成数、轨迹字节）、**领域文档盘点**（规模、时间、`index` 齐备、以及「域文档可能落后」标记）；没有新证据的轮次照样按标记复核该域并出结论。五个 pass（纠错、提炼、建链、晋升、剪枝）落到领域文档与 `GUIDE.md`；`reference` 中判定无用的 Plan 由 dream 迁 `archived`（结论已上浮 + note 全 completed + 无唯一出处，三条同时成立，单次最多 3 个，`active` 不自动归档）。
 _Avoid_：自动复盘、kaizen、离线批处理
+
+> 纠正（2026-11-19，[001-新增backup-plan手工技能](plans/reference/2026-11-19-dream与backup技能化/001-新增backup-plan手工技能.md)、[004-单测与发布验收](plans/reference/2026-11-19-dream维护纳入存量与盘点/004-单测与发布验收.md)）：原写「只能人工或定时任务点名调用」——定时那条不成立。投递消息 `source.kind` 是 `schedule`，技能手势扫描只认 `user`，`skill` 工具又拒 `disable-model-invocation`，所以定时轮取不到技能，只有人工 `/dream` 生效（[question 017](questions/017-定时投递的dream取不到技能.md)）。
 
 **dream 游标**：
 `$DSH_HOME/toolkit/nano-flow-dream.json`（v2）按「Plan + 会话」记录已处理到的 turn seq 上界；只由 `nano_flow_dream` 的 `mark` 动作在 `git commit` 成功后推进（实现是随包 `dream-scan.mjs`），重复投递靠它保持幂等。seq 换会话会重新计数，所以旧 v1 的 Plan 级 `lastSeq` 一律当空游标全量处理。

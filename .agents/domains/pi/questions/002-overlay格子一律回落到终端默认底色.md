@@ -42,3 +42,8 @@ Note 侧栏的 `▤` 图标放在边框之上的右上角，两次反馈都出�
 ## 来源
 
 2026-11-09 用户两轮反馈（「为什么会有黑色背景，边框外我希望背景是透明的」「icon 本身的背景也是黑的」）；取证实现在 `repos/pi-toolkit/src/nano-flow/ui/sidebar.ts` 的 `mountOverlays` 与 `@earendil-works/pi-tui` 的 `compositeTuiLine`、`SEGMENT_RESET`。
+
+## 相关
+
+- [002-标题行折叠图标与交互](../plans/archived/2026-11-09-Note侧栏常驻与折叠/002-标题行折叠图标与交互.md) — 五轮反馈的定稿过程：铺空格右对齐 → 独立 1 列 overlay → 与上边框同行顶掉 `┐`，`margin.top` 最终回到 1。
+- [001-安装pi-toolkit并真机验收](../workflows/001-安装pi-toolkit并真机验收/001-安装pi-toolkit并真机验收.md) — overlay 改动要看重启或新会话的渲染，旧会话里的扩展实例不算证据。

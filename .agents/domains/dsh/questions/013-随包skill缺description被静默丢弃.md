@@ -18,7 +18,8 @@ description: 'SKILL.md 的 frontmatter 缺 description 或写成空值，包内 
 ## 处理
 
 - `description` 必填且非空，写清「什么时候用 + 做什么」。
-- 只给人手调的 skill 再补 `disable-model-invocation: true` 与同目录 `agents/openai.yaml` 的 `policy.allow_implicit_invocation: false`；该字段只影响模型自动选择，不补也不会造成目录里「有文件却不出现」。
+- 人手调的 skill 在 frontmatter 加 `disable-model-invocation: true`——DSH 只认这一处。宿主包里没有任何代码读 `agents/openai.yaml` 的 `policy.allow_implicit_invocation`（2026-11-19 全包 grep 零命中；`nested-skill/parse.ts` 与 `dsh-skill-filesystem` 都只看 frontmatter）。
+- 少这个字段不会让 skill 从目录里消失，只是它能被模型选中并加载；只有「缺 `description`」才是静默丢弃。
 - 目录名必须等于 frontmatter 的 `name`，且是 kebab-case。
 
 ## 验证

@@ -1,9 +1,11 @@
 ---
 name: '003-commandcode模型返回403'
-description: '选中 claude-* 或 gpt-6-astra 时上游返回 403 MODEL_NOT_IN_PLAN：这是套餐权限，不是端点映射或路径错；400/404 才是路径问题。'
+description: '历史记录：选中 claude-* 或 gpt-6-astra 时上游返回 403 MODEL_NOT_IN_PLAN 是套餐权限而非路径错；2026-11-10 起 provider 只上架 DeepSeek，该现场已不可复现。'
 ---
 
 # 003-commandcode模型返回403
+
+> 纠正（2026-11-19，[note 011](../plans/archived/2026-11-09-审查修复pi-toolkit/011-provider只上架DeepSeek并默认思考.md)，提交 `ab8b11c2`）：2026-11-10 起 provider 只上架 DeepSeek（目录 97 → 7），`/model` 不再列 Claude 与 `gpt-6-astra`，下面的 403 现场无法再复现。保留下来的结论是「网关按账号套餐门禁，403 是权限而不是端点映射或路径错」，以及 400/404 与它的区分方法。
 
 ## 适用条件与现象
 
@@ -29,9 +31,10 @@ description: '选中 claude-* 或 gpt-6-astra 时上游返回 403 MODEL_NOT_IN_P
 
 ## 来源
 
-Plan `2026-11-09-commandcode-provider接入`，[003-登录凭据与真机验收](../plans/reference/2026-11-09-commandcode-provider接入/003-登录凭据与真机验收.md)；log.jsonl run 6。
+Plan `2026-11-09-commandcode-provider接入`，[003-登录凭据与真机验收](../plans/archived/2026-11-09-commandcode-provider接入/003-登录凭据与真机验收.md)；log.jsonl run 6。
 
 ## 相关
 
-- [001-取证与方案定案](../plans/reference/2026-11-09-commandcode-provider接入/001-取证与方案定案.md) — 双协议与 baseUrl 不对称的取证，403 的判定建立在这套映射上。
-- [003-登录凭据与真机验收](../plans/reference/2026-11-09-commandcode-provider接入/003-登录凭据与真机验收.md) — 403 的逐条实测记录与信封原文。
+- [001-取证与方案定案](../plans/archived/2026-11-09-commandcode-provider接入/001-取证与方案定案.md) — 双协议与 baseUrl 不对称的取证，403 的判定建立在这套映射上。
+- [003-登录凭据与真机验收](../plans/archived/2026-11-09-commandcode-provider接入/003-登录凭据与真机验收.md) — 403 的逐条实测记录与信封原文。
+- [007-commandcode只上架DeepSeek并默认开思考](../adr/007-commandcode只上架DeepSeek并默认开思考.md) — 这条 403 证据促成目录收窄到 DeepSeek，收窄后的形态见该 ADR。

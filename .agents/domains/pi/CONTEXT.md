@@ -1,6 +1,6 @@
 ---
 name: 'Pi'
-description: 'pi 编码代理的扩展业务域：一个 @kxh4892636/pi-toolkit 包按开关提供嵌套 skill 发现与 $ 引用、会话自动命名、DeepSeek 网页搜索与抓取、向用户提问、Nano Flow 交付流程。'
+description: 'pi 编码代理的扩展业务域：pi-toolkit 按开关提供嵌套 skill 与 $ 引用、会话自动命名、DeepSeek 网页搜索与抓取、向用户提问、Nano Flow 交付流程，以及不带开关的 Command Code provider。'
 metadata:
   owner: 'pi'
 ---
@@ -76,11 +76,13 @@ _Avoid_：问答表单、确认弹窗、orchestrator 工具
 ### provider
 
 **Command Code provider**：
-`pi-toolkit` 注册的 `commandcode` provider，一个网关同时提供 OpenAI Chat Completions 与 Anthropic Messages 两套协议；11 个 `claude-*` 走 `anthropic-messages`（baseUrl `https://api.commandcode.ai/provider`），其余 85 个走 `openai-completions`（`.../provider/v1`），差异来自各 SDK 自己追加 `/v1/messages` 与 `/chat/completions`。
-_Avoid_：拆成两个 provider、静态 models.json 清单
+`pi-toolkit` 注册的 `commandcode` provider：只上架网关目录里的 DeepSeek 模型（2026-11-10 实测 97 → 7 条），全部走 `openai-completions`（`https://api.commandcode.ai/provider/v1`）；思考默认开启，档位用 DeepSeek 官方映射发 `reasoning_effort`（`off` 也走该字段，能真正关闭），不发被网关忽略的 `thinking.type`。
+_Avoid_：拆成两个 provider、静态 models.json 清单、Anthropic Messages 分支
+
+> 纠正（2026-11-19，`repos/pi-toolkit/src/provider/commandcode.ts` @ 提交 `ab8b11c2`「只上架 DeepSeek 并默认开思考」，[note 011](plans/archived/2026-11-09-审查修复pi-toolkit/011-provider只上架DeepSeek并默认思考.md)）：原写「11 个 `claude-*` 走 `anthropic-messages`、其余 85 个走 `openai-completions`」的双协议描述已作废——Anthropic 分支删除，目录只留 DeepSeek；当年的 403 现场留在 [question 003](questions/003-commandcode模型返回403.md)。
 
 **provider 目录发现**：
-`refreshModels` 每次刷新先拉 `GET /provider/v1/models`（免鉴权）取 id 与上下文窗口，再合并价格页内嵌 JSON 补 `cost`（归一化 id 前缀匹配），成功后用 `context.publish({ persist })` 存快照；断网或上游失败时回退快照，没有快照则把错误抛给 pi。价格缺失只降级为 0 价。
+`refreshModels` 每次刷新先拉 `GET /provider/v1/models`（免鉴权）取 id 与上下文窗口，**入口就按厂商只留 `deepseek/*`（或裸 `deepseek-*`）**，再合并价格页内嵌 JSON 补 `cost`（归一化 id 前缀匹配），成功后用 `context.publish({ persist })` 存快照；断网或上游失败时回退快照（快照同样丢弃他厂条目），没有快照则把错误抛给 pi。价格缺失只降级为 0 价；`reasoning` / `input` / `thinkingLevelMap` 由代码常量重新推导，不进快照。
 _Avoid_：手写模型清单、把价格当成目录的前置条件
 
 **provider 凭据链路**：
@@ -109,8 +111,12 @@ _Avoid_：会话轮转、会话删除、压缩
 清空后作为首条 user 消息注入的文本：当前 Plan + 上一轮 assistant 输出（`<rotation-last-output>`）；本轮用户输入不重复包裹。
 _Avoid_：摘要、handoff prompt
 
+**随包 skill**：
+`nano-flow/skills/` 下随包分发的五个技能：`code-spec`、`learning`、`ponytail-audit`、`ponytail-review`、`to-skill`（`ask` / `do` 已下线）；只在 Nano Flow 会话经 `resources_discover` 出现。frontmatter 带 `disable-model-invocation: true` 的（`learning`、`ponytail-audit`、`to-skill`）不进模型的可选 skill 列表，只能 `/skill:<名>` 手动点名；`ponytail-audit` / `ponytail-review` 正文原样取自 MIT 许可的 ponytail 项目（英文原文），只把调用名改成 `/skill:` 形态。
+_Avoid_：skill 插件、skill 包、随包工具
+
 **Note 侧栏**：
-fullscreen 右上角 overlay：**已绑定 Plan 时常驻**，列当前绑定 Plan 的未完成 note（可为空，空时框内留一行 dim `全部完成`），行 = 中文状态 + note 名；点击某行后，详情卡悬浮在该行左下侧（顶端与该行对齐、右缘离侧栏 2 列），标题行右端带 `×`，`×` 或 Esc 关闭，`turn_end` 刷新一次。右上角、与上边框同行且右缘对齐处有一个与边框同色的 `▤` 图标（**独立 1 列 overlay**，占用 `┐` 那一格；overlay 合成会强制 `SEGMENT_RESET`，格子底色拿不到底行背景，所以只能落在卡片轮廓内），点击把整块收成这一个图标，再点展开（折叠状态存内存，不落盘）。
+fullscreen 且终端宽度 ≥ 110 列才出现的右上角 overlay：**已绑定 Plan 时常驻**，列当前绑定 Plan 的未完成 note（可为空，空时框内留一行 dim `全部完成`），行 = 中文状态 + note 名；点击某行后，详情卡悬浮在该行左下侧（顶端与该行对齐、右缘离侧栏 2 列），标题行右端带 `×`，`×` 或 Esc 关闭，`turn_end` 刷新一次。右上角、与上边框同行且右缘对齐处有一个与边框同色的 `▤` 图标（**独立 1 列 overlay**，占用 `┐` 那一格；overlay 合成会强制 `SEGMENT_RESET`，格子底色拿不到底行背景，所以只能落在卡片轮廓内），点击把整块收成这一个图标，再点展开（折叠状态存内存，不落盘）。
 _Avoid_：看板、dock、悬浮提示、居中弹窗
 
 **Plan 轨迹**：
@@ -119,16 +125,20 @@ _Avoid_：看板、dock、悬浮提示、居中弹窗
 _Avoid_：dsh 的 compact log、seq 游标、实时逐条追加、丢弃 system 条目
 
 **dream**：
-Nano Flow 的记忆维护 pass（纠错 / 提炼 / 建链 / 晋升 / 剪枝），由 `/dream` 命令手动触发一次全量运行；不建定时任务、不用 `seq` 游标；输入是 Plan 轨迹、`spec.md` 与 note。
-_Avoid_：定时任务、后台维护、kaizen
+Nano Flow 的记忆维护 pass（纠错 / 提炼 / 建链 / 晋升 / 剪枝），一次全量运行；输入是 Plan 轨迹、`spec.md` 与 note。pi 自己不带定时器、不留 `seq` 游标；每日触发放在宿主侧——systemd user timer 调 wrapper，wrapper 用 `pi --mode rpc` 送一行 `/dream`（[ADR 006](adr/006-定时dream由系统定时器加RPC客户端触发.md)）。
+_Avoid_：后台维护、kaizen、增量游标
+
+> 纠正（2026-11-19，[note 015](plans/reference/2026-11-09-pi-toolkit插件/015-定时触发dream.md) 真机验收）：原写「由 `/dream` 命令手动触发…不建定时任务」，漏了宿主侧定时链路——`pi-dream.timer` 2026-11-09 已装并跑通一次（3.7 min，产出 `docs(dream): …` 提交）。
 
 **dream 范围**：
 当前 cwd 的 `.agents/domains/*` 全部域；每域在 `active` + `reference` 里按目录名日期倒序取最新 `dreamMaxPlansPerDomain`（默认 21）个 Plan；`archived` 不参与。
 _Avoid_：全部 Plan、增量游标、当前 Plan
 
 **Nano Flow 设置**：
-`pi-toolkit.json` 的 `nanoFlow` 节：8 项篇幅上限 + `rotateAt` + `always`；只改 JSON，不做设置界面。
+`pi-toolkit.json` 的 `nanoFlow` 节：8 项篇幅上限 + `rotateAt`（默认 0.618）+ `dreamMaxPlansPerDomain`（默认 21）+ `always`；只改 JSON，不做设置界面。
 _Avoid_：nano-flow.json、设置弹窗
+
+> 纠正（2026-11-19，`repos/pi-toolkit/src/settings.ts:454-516`、`src/nano-flow/config.ts:10-46`）：原写「8 项篇幅上限 + `rotateAt` + `always`」，漏了 `nanoFlow.dreamMaxPlansPerDomain`（dream 每域 Plan 上限）。
 
 **搜索结果**：
 DeepSeek 官方 Search API 返回的结构化条目，投影为 Harness 的便携形态 `{ url, title?, snippet?, summary?, publishedAt? }`；排序专用字段（`rerank_score`、`authority`、`site_name`、`site_icon`）不模型可见。多查询结果按轮转合并、按 URL 去重并封顶，摘要折叠空白后截断。

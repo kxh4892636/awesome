@@ -13,7 +13,7 @@ description: '改动 repos/pi-toolkit 后要装进本机 pi 时：先 check/test
 
 1. **静态门禁**：`pnpm --filter @kxh4892636/pi-toolkit check`（格式 + lint + 类型）。
 2. **单测**：`pnpm --filter @kxh4892636/pi-toolkit test`；只改 nano-flow 时可先跑该目录快跑。
-3. **安装**：`pi install /absolute/path/to/repos/pi-toolkit`（README 口径）。仓库内也用过相对路径加 `-a`：`pi install ./repos/pi-toolkit -a`，安装后 `~/.pi/agent/settings.json` 指向该包。pi 用 jiti 直接加载 TS，**不需要 build**。
+3. **安装**：`pi install /absolute/path/to/repos/pi-toolkit`（README 口径）。仓库内也用过相对路径加 `-a`：`pi install ./repos/pi-toolkit -a`，安装后 `~/.pi/agent/settings.json` 的 `packages` 记下该包的**绝对路径**。pi 用 jiti 直接加载 TS，**不需要 build**。装完先 `Test-Path`（或 `ls`）确认这条路径真实存在——路径是快照，仓库一搬就不会跟着变。
 4. **生效**：扩展与 nested-skill 发现都在 pi 启动或 `/reload` 时发生，固定提示词在 run 开始时注入 —— 改完必须**重启 pi 或新开会话**才可信；未重启时看到的是旧行为，别当证据。
 5. **真机验收**（按本次改动挑一项，把观察结果写进 note）：
    - 开关：`/toolkit` 五行的开启/关闭立即生效（`webTools` / `askQuestions` 即时，`nestedSkills` 要等下一次 `input` 或 `/reload`）。
@@ -26,6 +26,8 @@ description: '改动 repos/pi-toolkit 后要装进本机 pi 时：先 check/test
 
 - **中途打开 Nano Flow 拿不到随包 skill**：skill 经 `resources_discover` 注入，`/nano-flow on` 之后需要 `/reload` 或新会话才出现；命令提示里已写明这一点。
 - **headless 冒烟会污染 Plan 轨迹**：在仓库内用 headless 会话冒烟时，若该会话绑定过真实 Plan，`agent_end` 会把测试记录写进那个 Plan 的 `log.jsonl`。冒烟用 `/tmp` 下造的会话文件，事后按 `id` 去重并重编号，别留下测试 run。
+- **仓库搬迁后 `pi install` 的旧路径会悬空**：`~/.pi/agent/settings.json` 存的是安装时的绝对路径。2026-11-14 工作区从 `packages/pi-toolkit` 拆到独立仓 `repos/pi-toolkit`，而 2026-11-19 复查时 `settings.json` 仍写着 `...\kxh-kit\packages\pi-toolkit`（该目录已不存在）——此时新会话里根本没有这个扩展。先核对路径，再 `pi install ./repos/pi-toolkit -a` 重指向；只看 `pi list` 输出说「已装」不算证据。
+- **只想确认扩展有没有加载**：`pi --mode rpc --no-session` 起一个临时 cwd 的会话，读它返回的 commands 列表（应含 `nano-flow` / `dream` / `toolkit` 与若干 `skill:*`）。不碰真实 Plan 目录就不会污染轨迹，比开交互会话快。
 - **改提示词后先看 `dist` 不适用**：pi 不做构建，检查安装副本要看 `~/.pi/agent/settings.json` 指向的包路径与源文件，而不是 `dist`。
 - 旧会话仍挂着旧的扩展实例与旧提示词；验收必须用重启后的新会话。典型症状：`nano_flow_check` 报 `Cannot read properties of undefined (reading 'length')` 这类底层 TypeError，而同一份代码在新进程里跑通 —— 那是工具与 `scripts/check-domain.mjs` 模块版本错配，`/reload` 或重启后重试；工具本身会先报出「缺少某个字段…重启 pi 或 /reload」。
 

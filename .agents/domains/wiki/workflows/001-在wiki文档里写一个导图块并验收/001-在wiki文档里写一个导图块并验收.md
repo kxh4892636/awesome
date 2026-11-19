@@ -7,10 +7,12 @@ description: "在 wiki 的 docs markdown 里写一个 <Mindmap> 块的完整步�
 
 适用：新增或改写一篇导图，或改动导图里某个节点的编号。触发场景是「想给某块知识画一张导航图」，不是「新建一个页面」——导图没有自己的路由（[001-导图是文档内渲染块而非独立路由](../../adr/001-导图是文档内渲染块而非独立路由.md)）。
 
+> 现状（2026-11-19）：站点已撤下 mindmap 插件（[ADR 007](../../adr/007-导图退出站点改用mermaid主题.md)），`<Mindmap>` 块不再有组件接收，tracked 文档里也没有这样的块。本文描述的是插件仓 `repos/docusaurus-plugin-mindmap` 0.1.0 的用法与验收；站点要做图写 mermaid 代码块。
+
 ## 前置
 
 - 目标文档在 `repos/wiki/docs/` 下（插件只跑 docs 的 markdown；blog 已关闭）。
-- 要引用的文档有 front matter `id`：站点里 370 篇没有（362 篇无 front matter + 8 篇脚本生成的八股文），引用它们点开必 404。
+- 要引用的文档有 front matter `id`：没有 id 的引用点开必 404（2026-11-19 实测：本地 `docs/` 1608 篇里 371 篇无 id，按 tracked 算是 1512 篇里 276 篇；数字随笔记增长，别再记死）。
 - 插件已构建：`repos/wiki` 的 `prebuild` 会先 build 该包，直接跑站点 build 即可。
 
 ## 步骤
@@ -53,3 +55,4 @@ description: "在 wiki 的 docs markdown 里写一个 <Mindmap> 块的完整步�
 
 - [003-节点编号即id](../../adr/003-节点编号即id.md) — 编号规则与报错清单的出处
 - [004-引用写成原生链接加doc后缀](../../adr/004-引用写成原生链接加doc后缀.md) — 两种引用的确切写法与解析边界
+- [007-导图退出站点改用mermaid主题](../../adr/007-导图退出站点改用mermaid主题.md) — 站点侧为什么已经不再渲染这些块
