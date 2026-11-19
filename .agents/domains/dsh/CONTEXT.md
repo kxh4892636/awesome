@@ -111,7 +111,7 @@ nano-flow 记忆的四层：L0 `<plan>/log.jsonl` 轨迹、L1 note 的结论、L
 _Avoid_：记忆库、知识图谱、第五层
 
 **dream**：
-后台记忆维护回合：随包技能 `skills/dream/SKILL.md`（2026-11-19 起从 `dream/prompt.md` 搬来，`disable-model-invocation`，只能人工或定时任务点名调用），宿主定时任务只投一句「调用 dream 技能」到新建的 nano-flow 会话；按游标把 `log.jsonl` 的新轮次做纠错、提炼、建链、晋升、剪枝，落到领域文档与 `GUIDE.md`。
+后台记忆维护回合：随包技能 `skills/dream/SKILL.md`（2026-11-19 起从 `dream/prompt.md` 搬来，`disable-model-invocation`，只能人工或定时任务点名调用；同日按 `to-skill` 重写成一个维护循环「取输入 → 定范围 → 维护 → 归档 → 收尾」，细则下沉到 `reference/`），宿主定时任务只投一句「调用 dream 技能」到新建的 nano-flow 会话。一轮的输入是 scan 给的三样：游标之后的新 turn（**新证据**，新结论只从这里来）、每域全部 `active` + `reference` 的**存量 Plan**（spec 状态、note 完成数、轨迹字节）、**领域文档盘点**（规模、时间、`index` 齐备、以及「域文档可能落后」标记）；没有新证据的轮次照样按标记复核该域并出结论。五个 pass（纠错、提炼、建链、晋升、剪枝）落到领域文档与 `GUIDE.md`；`reference` 中判定无用的 Plan 由 dream 迁 `archived`（结论已上浮 + note 全 completed + 无唯一出处，三条同时成立，单次最多 3 个，`active` 不自动归档）。
 _Avoid_：自动复盘、kaizen、离线批处理
 
 **dream 游标**：

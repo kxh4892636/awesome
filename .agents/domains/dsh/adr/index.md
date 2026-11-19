@@ -17,3 +17,4 @@
 | [011-预设挂PTC执行器](011-预设挂PTC执行器.md) | nano-flow 预设直接挂 dsh-tool-executor-ptc，并以宿主 code-runtime 为前提；已弃用的呈现选型器不再使用。 | accepted |
 | [012-源码按能力分层](012-源码按能力分层.md) | nano-flow 源码按能力分六个目录、发布布局 dist/nano-flow 不变，分层与提示词硬规则用测试断言固定。 | accepted |
 | [013-轮转把Plan绑定过继给新会话](013-轮转把Plan绑定过继给新会话.md) | 轮转后把旧会话自己那条绑定写进新会话 id，看板与轨迹立刻续上同一 Plan；只认旧绑定，不恢复「唯一 active Plan」启发式。 | accepted |
+| [014-dream按存量与盘点维护而不只吃增量](014-dream按存量与盘点维护而不只吃增量.md) | dream 的输入除游标后的新 turn 外，还包括每域全部 active+reference 的存量 Plan 与领域文档盘点；无增量轮次照样复核，并可归档无用的 reference Plan。 | accepted |
