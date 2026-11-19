@@ -4,4 +4,4 @@
 
 | Name | Description | Related Note |
 | --- | --- | --- |
-| [001-新增backup-plan手工技能](001-新增backup-plan手工技能.md) | 随包 skill：按整体内容重命名当前 Plan 并归档，只能人工调用。 | — |
+| [001-新增backup-plan手工技能](001-新增backup-plan手工技能.md) | 随包 skill：按整体内容重命名当前 Plan，reference/archived 给建议由用户定。 | — |

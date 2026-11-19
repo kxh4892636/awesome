@@ -1,6 +1,6 @@
 ---
 name: "文档上限与backup技能"
-description: "新增人工调用的 backup-plan 技能；给 workflow、ADR 与 Plan 的 note 加数量上限（默认 89）。"
+description: "新增人工调用的 backup-plan 技能；在 dream 提示词里要求每域 question/ADR/workflow 不超过 89 条。"
 status: in_progress
 ---
 
@@ -15,13 +15,15 @@ status: in_progress
 
 ## 目标
 
-- 技能：`backup-plan` 随包分发，`disable-model-invocation`，只能用户手动调用；内容是按整体内容重命名当前 Plan、移到 `plans/archived/` 并重新绑定。
-- 上限：新增三个数量上限（每域 workflow 数、每域 ADR 数、每 Plan note 数），默认值都是 89；超限时 check 要给出明确处理动作——workflow/ADR 提示重构，note 给出「重构 note」与「把 Plan 拆成 A/B，旧 note 归 A、新 note 归 B，并 bind 到 B」两个选择。
+- 技能：`backup-plan` 随包分发，`disable-model-invocation`，只能用户手动调用；内容是按整体内容重命名当前 Plan，`reference` 还是 `archived` 由技能给建议、用户拍板，再移动并重新绑定。
+- dream：原 `dream/prompt.md` 整体搬成 `skills/dream/SKILL.md`（同样只能人工或定时任务点名调用），宿主定时任务只投一句「调用 dream 技能」。
+- 上限：每域 `question` / `ADR` / `workflow` 各不超过 89 条；超限由 dream 在维护时整理。**只写进 dream 提示词，不改代码**：不新增设置项、不给 check 加条数校验、不碰 Plan 与 note 的数量。
 
-## 未定问题
+## 决策（2026-11-19）
 
-- 「workflow 与 ADR 自动重构」与现有「check 只就地修由既有事实唯一确定的问题」冲突：合并哪些、怎么合不是唯一解。需要定成「check 只报清单，模型执行」，还是「check 生成确定的合并方案」。
-- 拆分 Plan 的实现边界：是否由 check 直接搬文件、还是只输出指令由模型执行；`log.jsonl` 与绑定如何跟着走。
+- 「check 超限自动重构」与「check 只修唯一确定的问题」冲突，且 0.5.3 曾因同一理由删掉 ADR 数量上限；最终改成 dream 侧的人工式整理：数字 89 写死在 `dream/prompt.md`，由 dream 每轮自查并合并/剪枝/拆分。
+- Plan 拆分成 A/B、note 数量上限一并取消（用户明确「plan 的拆分就不用管了」）。
+- 已把代码侧改动（设置项、面板字段、check 条数校验、注入块的计数行）全部回退，0.5.76 只含 dream 提示词的这段改动。
 
 ## 相关
 
@@ -33,4 +35,4 @@ status: in_progress
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [001-新增backup-plan手工技能](001-新增backup-plan手工技能.md) | 随包 skill：按整体内容重命名当前 Plan 并归档，只能人工调用。 | blocked | 0.5.75 已装进 web profile，等用户在斜杠菜单确认 /backup-plan 出现。 | 重启宿主后在斜杠菜单确认 backup-plan 出现且不参与模型自动挑选 | — |
+| [001-新增backup-plan手工技能](001-新增backup-plan手工技能.md) | 随包 skill：按整体内容重命名当前 Plan，reference/archived 给建议由用户定。 | blocked | 0.5.76 已装进 web profile，等重启后在斜杠菜单确认 backup-plan 与 dream 两个技能出现。 | 重启宿主，确认 /backup-plan 与 /dream 出现在菜单且不被模型自动挑中 | — |
