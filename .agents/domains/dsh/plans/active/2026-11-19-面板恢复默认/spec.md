@@ -18,19 +18,21 @@ toolkit 侧边栏面板的「Nano Flow 设置」有 9 个数值（spec / note / 
 
 ## 方案要点
 
-- 纯客户端改动，宿主半与契约不变：默认值已经由 `contract.ts` 的 `DEFAULT_NANO_FLOW_SETTINGS` 提供，面板按现有 `toDisplay` 换算成界面文本。
+- 面板侧是纯客户端改动：默认值由 `contract.ts` 的 `DEFAULT_NANO_FLOW_SETTINGS` 提供，面板按现有 `toDisplay` 换算成界面文本。
+- 2026-11-19 用户指定把默认值改为 description 144 字、GUIDE 21 KB、轮转阈值 0.55（原 233 字 / 13 KB / 0.618），同步改 `contract.ts` 与随包校验脚本的 `DEFAULT_LIMITS`；只改默认值，不碰用户已保存的 `nano-flow.json`。
 - 单个图标用宿主 `ui-primitives` 的 `IconRefreshOutlineRegular`（宿主已导出），不自绘 SVG；输入框外层是宿主 `Input` 的 `span`，图标绝对定位贴在右侧，内层 input 让出右内边距。
 - 不改保存流程：两个动作都只 `setDraft`，清掉上一条错误提示，二次保存才写 `$DSH_HOME/toolkit/nano-flow.json`。
 
 ## 验收
 
-1. 打开 Nano Flow 设置，点「恢复默认」：9 个输入框回到 34 / 13 / 233 / 89 / 13 / 8 / 34 / 13 KB 与 0.618，未点「保存」前不落盘。
+1. 打开 Nano Flow 设置，点「恢复默认」：9 个输入框回到 34 / 13 / 144 / 89 / 13 / 8 / 34 / 21 KB 与 0.55，未点「保存」前不落盘。
 2. 改乱一个字段后点该框内的恢复图标：只有这个框回到默认值，其他草稿保持用户输入。
 3. `vp check` 与 `vp test src` 全绿；面板单测覆盖整组与单字段两条路径。
 
 ## 影响面
 
-- `repos/dsh-toolkit/src/client/panel.ts`、`stylesheet.ts`、`primitives.d.ts`、`test-primitives.ts`、`panel.test.ts`。
+- 面板：`repos/dsh-toolkit/src/client/panel.ts`、`stylesheet.ts`、`primitives.d.ts`、`test-primitives.ts`、`panel.test.ts`。
+- 默认值：`src/contract.ts`、`src/nano-flow/documents/lib/base.mjs`，以及断言默认值的四个测试文件。
 - 打包发版顺序照 [dsh 001 工作流](../../workflows/001-发布dsh-toolkit并真机验收/001-发布dsh-toolkit并真机验收.md)。
 
 ## 相关
@@ -44,4 +46,4 @@ toolkit 侧边栏面板的「Nano Flow 设置」有 9 个数值（spec / note / 
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [001-面板恢复默认与单字段重置](001-面板恢复默认与单字段重置.md) | 设置区加「恢复默认」按钮，每个输入框右侧加恢复图标，均把数值填回默认值。 | blocked | 0.5.71 已装进 web profile，但宿主仍跑旧 bundle；重启 dsh web 后才能真机验收。 | 重启 web profile 宿主，打开 toolkit 面板点「恢复默认」与框内图标验收 | — |
+| [001-面板恢复默认与单字段重置](001-面板恢复默认与单字段重置.md) | 设置区加「恢复默认」按钮与每框恢复图标；默认值改为 144 字、GUIDE 21 KB、轮转 0.55。 | blocked | 0.5.72 已装进 web profile，宿主仍跑旧 bundle；重启 dsh web 后才能真机验收。 | 重启 web profile 宿主，打开 toolkit 面板点「恢复默认」与框内图标验收 | — |
