@@ -1,7 +1,7 @@
 ---
 name: "dream与backup技能化"
 description: "新增人工调用的 backup-plan 技能；在 dream 提示词里要求每域 question/ADR/workflow 不超过 89 条。"
-status: in_progress
+status: completed
 ---
 
 # dream与backup技能化
@@ -35,4 +35,3 @@ status: in_progress
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [001-新增backup-plan手工技能](001-新增backup-plan手工技能.md) | 随包 skill：按整体内容重命名当前 Plan，reference/archived 给建议由用户定。 | blocked | 0.5.76 已装进 web profile，等重启后在斜杠菜单确认 backup-plan 与 dream 两个技能出现。 | 重启宿主，确认 /backup-plan 与 /dream 出现在菜单且不被模型自动挑中 | — |

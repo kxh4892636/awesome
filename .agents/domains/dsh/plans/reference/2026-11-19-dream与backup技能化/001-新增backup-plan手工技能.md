@@ -1,10 +1,9 @@
 ---
 name: "001-新增backup-plan手工技能"
 description: "随包 skill：按整体内容重命名当前 Plan，reference/archived 给建议由用户定。"
-status: blocked
-reason: "0.5.76 已装进 web profile，等重启后在斜杠菜单确认 backup-plan 与 dream 两个技能出现。"
+status: completed
+reason:
 related_noted: []
-next_step: "重启宿主，确认 /backup-plan 与 /dream 出现在菜单且不被模型自动挑中"
 ---
 
 # 001-新增backup-plan手工技能
@@ -35,4 +34,4 @@ next_step: "重启宿主，确认 /backup-plan 与 /dream 出现在菜单且不�
 - 打包 `0.5.76` 已装进 web profile；`dist/nano-flow/skills/` 有 `backup-plan` 与 `dream`，`dist/nano-flow/prompts/dream.md` 已消失。
 - 定时任务 `schedule-d4311690…` 的 prompt 已换成 `/dream …`，下次触发 22:00。**但定时投递不会触发技能注入**：投递消息的 source 是 `kind: "schedule"`（`dsh-schedule/lib/index.js:1382-1387`），而手势扫描只认 `kind: "user"`（`dsh-tool-skill/lib/index.js:1120`）；`skill` 工具对 `disable-model-invocation` 的技能也直接抛错（同文件 :876-879）。`/dream` 在定时提示词里只是普通文字，等用户手动验证模型能否自己找到技能文件，再定方案。
 - 提交：`b99c312`（技能改动）、`ac410c5`（0.5.76）。
-- 待填：重启后的菜单确认。
+- 真机验收（2026-11-19）：用户重启 0.5.76 后成功调用 `/backup-plan`，技能在菜单中可用；按用户选定把它所在的 Plan 归到 `reference`（本 Plan 就是它自己的第一个用户）。
