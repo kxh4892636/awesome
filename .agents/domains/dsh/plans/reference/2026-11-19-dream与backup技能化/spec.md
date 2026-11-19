@@ -1,10 +1,10 @@
 ---
-name: "文档上限与backup技能"
+name: "dream与backup技能化"
 description: "新增人工调用的 backup-plan 技能；在 dream 提示词里要求每域 question/ADR/workflow 不超过 89 条。"
 status: in_progress
 ---
 
-# 文档上限与backup技能
+# dream与backup技能化
 
 ## 背景
 
