@@ -16,7 +16,9 @@ description: '定时任务投递的消息 source.kind 是 schedule，技能手�
 3. 模型也补不上：`dream` 带 `disable-model-invocation: true`，`skill("dream")` 直接抛 `skill "dream" is not available for model invocation`（同文件 `:876-879`，2026-11-19 真机同一句）。
 4. 2026-11-19 起 dream 指令已从 `prompts/dream.md` 搬进技能，所以「把整份提示词当任务 prompt 投递」的旧办法也一并失效。
 
-## 处理（未定，三条出路任选一条）
+## 处理（2026-11-20 走第二条）
+
+实际选的是「任务 prompt 改成普通指令」：prompt 现在是 `/dream 调用 dsh-toolkit 中 nano-flow 的 dream skill，维护领域文档。`，模型自己按名找到 `repos/dsh-toolkit/src/nano-flow/skills/dream/SKILL.md` 读全文再执行。2026-11-20 22:00 那轮实测跑通（scan + 五 pass + 校验 + commit），代价是路径靠模型自己猜得对。下面是当初的三条候选。
 
 - **让 dream 可被模型选中**：去掉 `disable-model-invocation` 与 `agents/openai.yaml` 的 `policy.allow_implicit_invocation: false`。定时轮能跑，代价是日常会话里模型可能自己挑中它。
 - **任务 prompt 改成普通指令**：写「读 `dist/nano-flow/skills/dream/SKILL.md` 并按它执行」，不依赖技能注入；代价是把技能路径写死在宿主任务里，升级要同步改。

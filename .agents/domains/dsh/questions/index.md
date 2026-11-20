@@ -21,3 +21,4 @@
 | [015-Windows上单测假红的两处平台假设](015-Windows上单测假红的两处平台假设.md) | dsh-toolkit 在 Windows 上跑 test 假红：layering 用 URL.pathname 取源码目录得到 /C:/…，plan-log 用 POSIX 字面量做预期路径、与 join 结果不等；两处都改成平台无关写法。 |
 | [016-回合外墓碑会让会话日志加载失败](016-回合外墓碑会让会话日志加载失败.md) | 在 turn/end 之后追加空内容 system/message 墓碑，写入时能过、冷读时 v4 关系校验判整条历史损坏；修复要把它挪回所属回合最后一个 step 内并重排 seq。 |
 | [017-定时投递的dream取不到技能](017-定时投递的dream取不到技能.md) | 定时任务投递的消息 source.kind 是 schedule，技能手势只认 user、skill 工具又拒 disable-model-invocation，于是定时轮 dream 取不到技能、维护不跑。 |
+| [018-dream扫描把单引号status漏计](018-dream扫描把单引号status漏计.md) | scan 只剥双引号，单引号 status（合法 YAML）与 completed 比不相等，盘点里记成 note 0/N、spec 状态带引号。 |

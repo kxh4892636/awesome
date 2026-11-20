@@ -86,6 +86,8 @@ _Avoid_：当前 Plan、任务上下文
 
 **生效上限**：
 toolkit 面板「Nano Flow 设置」维护的数值来源，持久化在 `$DSH_HOME/toolkit/nano-flow.json`；启动时由它生成「篇幅限制」块，不把具体数字写死在提示词里。
+
+面板支持整组「恢复默认」与单字段复位图标，两者都只改表单草稿、仍由「保存」落盘（2026-11-19 用户选定）。出厂值 spec 34 KB / note 13 KB / 描述 144 字 / CONTEXT 89 KB / question 13 KB / ADR 8 KB / workflow 34 KB / GUIDE 21 KB / rotateAt 0.55——描述字数、GUIDE 上限与轮转阈值同日从 233 字、13 KB、0.618 调低/调高，只改默认值，已保存的 `nano-flow.json` 不动。
 _Avoid_：魔法数字、硬编码阈值
 
 **上下文重置**：
