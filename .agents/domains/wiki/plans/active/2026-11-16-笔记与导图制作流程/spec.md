@@ -1,82 +1,74 @@
 ---
 name: "笔记与导图制作流程"
-description: "把「如何做笔记」落成可执行的制作流程：普通笔记与导图笔记的模板、步骤、构建与验收。"
-status: pending
+description: "知识笔记制作流程与交付记录：React / Go / TCP 笔记、Anki 卡片、Mermaid 支持与 learning skill 规则。"
+status: in_progress
 ---
 
 # 笔记与导图制作流程
 
 ## 目标
 
-把 wiki 里已有的「如何做笔记」从分类说明变成可照做的制作流程：选素材 → 拆知识点 → 写正文 → 建导图 → 两类引用 → 构建 → 浏览器验收 → 归档。流程要同时覆盖普通笔记与思维导图笔记，并配可复制的模板、新建命令与验收清单。
+当前以**知识笔记**为主：从八股题、归档资料与联网检索整理可复习的 Markdown 笔记，配 Anki 卡片；笔记要能被人工阅读，也能被 agent 按同一规则继续生产。
 
-**note 不预设**：本 Plan 目前只有 spec，切片按用户后续输入创建，不凭推测先建 note。
+导图分支已下线：wiki 移除 mindmap 插件，learning skill 删除 MINDMAP.md；本 Plan 后续只维护知识笔记与配套工具。
 
-## 现状（2026-11-16 实测）
+## 现状（2026-11-20）
 
 | 项 | 事实 |
 | --- | --- |
-| 仓库 | `repos/wiki`，main，最新提交 `8a2c45d`（插件依赖改 GitHub raw 制品） |
-| tracked 文档 | 1495 篇 md：`docs/020-八股文梳理` 8 篇、`docs/090-归档` 1485 篇、`docs/README.md`、`docs/perf.md` |
-| 不发布的目录 | `010-记录` 与 `000-中转` 被 `.gitignore` 的 `*/*记录*`、`*/*中转*` 排除，只在本地磁盘，不进 git、不进站点 |
-| front matter id | 1217 篇有 UUID 形式的 `id`；270 篇无 front matter、8 篇有 front matter 无 `id` → 这 278 篇不能被 `doc:<id>` 引用 |
-| 标题层级 | H1 1669、H2 5381、H3 502、H4 68、H5 807；**301 处跳级、分布在 65 篇**（多为 H2 直接挂 H5）；2 篇无 H1、21 篇多个 H1 |
-| 换行 | tracked 文档已无 CRLF（0 篇），解析不必再归一化 |
-| 导图块 | tracked 文档里 0 个 `<Mindmap>` 块；已知示例在本地 `000-中转`（不发布） |
-| 现有流程 | `docs/090-归档/060-SOP/001-如何做笔记.md` 只给学习 / 应用 / 阅读三类笔记的定义与场景，没有步骤、模板、构建与验收 |
-| 导图规则 | 编号即 id、标题层级不跳级、唯一 H1、`doc:<id>` 引用、`#<编号>` 节点引用；见 [workflow 001](../../../workflows/001-在wiki文档里写一个导图块并验收/001-在wiki文档里写一个导图块并验收.md) |
-| 构建门禁 | `onBrokenLinks: throw`、`onBrokenMarkdownLinks: warn`；导图校验在 remark 阶段抛错；`doc:<id>` 写错 **不报错**，只能人工点（[question 003](../../../questions/003-doc引用写错为什么build不报错.md)） |
-| 站点脚本 | 只有 `start` / `build` / `serve`，没有新建笔记或校验 id 的脚本；`scripts/` 仅八股文快照生成 |
+| wiki 仓库 | `repos/wiki`，main，最新 `a0fcaae`，工作区干净 |
+| dsh-toolkit | `repos/dsh-toolkit`，main，最新 `142acf9`（0.5.78），工作区干净 |
+| React 笔记 | `docs/020-计算机/050-客户端/010-react`：7 篇知识笔记 + 1 个分类占位页 |
+| Go 笔记 | `docs/020-计算机/020-编程语言/040-go`：7 篇 |
+| TCP 笔记 | `docs/020-计算机/010-理论基础/010-计算机网络`：6 篇，覆盖八股 TCP 组 21 题 |
+| Anki | React 牌组 7 张、Go 牌组 7 张、TCP 牌组 6 张；均单一根牌组 |
+| Mermaid | Docusaurus 升至 3.10.2，启用 `@docusaurus/theme-mermaid`；`theme-common` 只剩 1 个实例 |
+| learning skill | 仅知识笔记；NOTE 规定「常见问题 → 概念索引 → 正文」；SKILL 允许 mermaid 状态/时序/流程图 |
+| dev | `pnpm start --port 3000 --host 127.0.0.1`，根页与笔记页返回 200 |
 
-## 待确认
+## 决策
 
-用户 2026-11-16 明确暂缓回答，等后续输入：
+- **知识笔记优先**：一个领域一个目录，知识笔记平铺；不再生产导图笔记。
+- **常见问题取原文**：第一个 H2 固定为「常见问题」，直接列八股原文，不改写；没有八股来源才列实际疑问。
+- **富文本有边界**：能代码演示的优先代码；一对一对应用列表；表格只放多维对比或演算；状态流转、时序、流程用 mermaid。
+- **不设参考章节**：来源在正文内联链接，避免文末堆链接。
+- **Anki 一 note 一卡**：正面 `主题-章节-问题`，背面 wiki UUID 短链；一个主题一个根牌组，不建子牌组。
+- **Mermaid 依赖单实例**：所有 `@docusaurus/*` 同版本，防止 theme-common 被 peer 拆成多个上下文。
 
-1. 流程主要读者：人、AI、还是两者共用。
-2. 覆盖范围：普通笔记 + 导图笔记、仅导图笔记、还是全部栏目。
-3. 交付形态：只写流程文档、流程 + 模板、还是流程 + 模板 + 脚手架脚本。
+## 交付
 
-这三点决定 note 切片，未定之前不建 note、不写模板、不改 `repos/wiki`。
-
-## 已知约束
-
-- **导图笔记不能直接复用旧笔记**：301 处标题跳级里 H2→H5 是常态，旧笔记整篇包进 `<Mindmap>` 会 build 失败；导图笔记要么新写，要么先重排层级。
-- **新笔记必须带 `id`**：否则不能进 `doc:<id>` 引用与 `/<id>` 短链；脚本生成 UUID 时要与现有 1217 个 id 去重。
-- **`doc:<id>` 静默 404**：build 不校验目标文档存在，验收必须逐个点（question 003）。
-- **模板不能放 `docs/`**：Docusaurus 会直接发布 `docs/` 下的所有 markdown，带占位符的模板只能放 `repos/wiki/templates/` 或仓外。
-- **流程只写一遍**：导图写法与报错解读已在 workflow 001，SOP 只写顺序与验收，用链接指过去。
-
-## 切片规则
-
-- 一条 note = 一个可独立验收的交付单元；按用户输入建，不提前拆。
-- 优先做能降低后续难度的交付：先定形态，再落模板 / 脚本，最后写 SOP 与示例验收。
-- 形态未定前，不改 `repos/wiki` 的任何文件。
+1. **[001-知识笔记交付记录](001-知识笔记交付记录.md)**：本轮 React / Go / TCP 笔记、Anki 卡片、Mermaid 与 skill 规则的交付清单和验收证据。
+2. **[002-清理导图遗留文档](002-清理导图遗留文档.md)**：把已下线的导图 workflow、ADR 与 CONTEXT 词条改写或归档，避免新会话误读。
 
 ## 非范围
 
-- 不批量改造现有 1495 篇笔记的标题层级、补 front matter id 或重排编号；只对新写的笔记生效。
-- 不做在线编辑器、AI 自动从素材生成全文、自动抓取网页入站。
-- 不新增 Docusaurus 插件；模板不发布到站点。
-- 不覆盖 `020-八股文梳理` 的生成脚本（快照 → markdown 是另一条链路）。
-- 不承诺 278 篇无 id 文档可被 `doc:<id>` 引用；要引用先单独补 id。
+- 不再新增或维护 `<Mindmap>` 导图、mindmap 插件与 MINDMAP.md。
+- 不批量改造既有 1495 篇归档笔记的标题层级或补 frontmatter id。
+- 不做在线编辑器、自动抓取整站或自动生成全文。
+- 不覆盖 `020-八股文梳理` 的快照生成脚本。
 
 ## 风险与假设
 
-- **范围未定**：读者、覆盖范围、交付形态任一变化都会重排切片；在此之前不动仓库。
-- **导图门槛比预想高**：如果用户期望「给旧笔记加导图」，必须先评估 65 篇跳级文档的重排成本。
-- **模板漂移**：模板与示例是两份文件，示例写完后要把偏差回写模板。
+- **Anki 依赖隧道**：AnkiConnect 在用户本机，远端要能访问 `127.0.0.1:8765` 才能建卡；隧道断开时只能准备参数，不能写入。
+- **Mermaid 客户端渲染**：语法错误不会让 build 失败，页面才报错；新增图要用浏览器或解析器验证。
+- **导图遗留文档**：`wiki workflow 001`、ADR 001–006 仍描述导图，已不适用于新流程，后续由 dream 或单独清理。
+- **规则双份**：learning skill 的 NOTE/SKILL 与 wiki 实际笔记可能漂移，改规则时以 skill 为源，再回写示例。
 
 ## 恢复入口
 
-1. 本 Plan 当前没有 note；收到用户输入后先用 `nano_flow_create` 建第一条，再按 notes_index 推进。
-2. 材料：`repos/wiki/docs/090-归档/060-SOP/001-如何做笔记.md`、[workflow 001](../../../workflows/001-在wiki文档里写一个导图块并验收/001-在wiki文档里写一个导图块并验收.md)、[ADR 003](../../../adr/003-节点编号即id.md)、[ADR 004](../../../adr/004-引用写成原生链接加doc后缀.md)。
-3. 本文件「现状」与仓库冲突时先复测再改，不另留一份事实表。
+1. 先读 [001-知识笔记交付记录](001-知识笔记交付记录.md) 了解本轮产出与证据。
+2. 规则源：`repos/dsh-toolkit/src/nano-flow/skills/learning/{SKILL,NOTE,ANKI}.md`。
+3. 笔记目录：React / Go / TCP 三处，见「现状」表。
+4. Anki 连接：先测 `curl -X POST http://127.0.0.1:8765 -d '{"action":"version","version":6}'`，失败先修隧道，不要猜成功。
 
 ## 进度
 
-- 2026-11-16：克隆 `repos/wiki`（此前只有 `repos/dsh-toolkit`），main 最新 `8a2c45d`；建立 Plan 并绑定会话。
-- 2026-11-16：按用户要求删除 5 条预设 note；note 改为按用户输入创建，当前 0 条。
-- 2026-11-17：确认导图使用手册在 `repos/dsh-toolkit/src/nano-flow/skills/learning/MINDMAP.md`；按用户要求删除同目录 `RULE.md`，SKILL.md 与 MINDMAP.md 的引用同步改掉。改动只在 dsh-toolkit 工作区，未提交。
+- 2026-11-16：克隆 `repos/wiki`，建立 Plan；删除预设 note，改为按用户输入创建。
+- 2026-11-17：删除 learning skill 的 RULE.md；统一 NOTE/MINDMAP 规则；补充 note-metrics。
+- 2026-11-18：新增 React 7 篇 + Go 7 篇知识笔记；创建 React/Go Anki 卡片；删除已迁移的八股题。
+- 2026-11-19：TCP 6 篇笔记覆盖 21 题；删除 MINDMAP.md 与导图支持；wiki 移除 mindmap 插件；接入 Mermaid；Docusaurus 统一 3.10.2，修复 ColorModeProvider 错误；TCP 笔记移至 `010-理论基础` 并同步 Anki 牌组。
+- 2026-11-20：更新本 spec 与交付记录，准备轮转。
+- 2026-11-20：轮转前复检；spec 与两条 note 已就位，`nano_flow_check` 通过；Plan 文档尚未提交。
 
 ## 追踪 Note
 
@@ -84,3 +76,4 @@ status: pending
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
+| [002-清理导图遗留文档](002-清理导图遗留文档.md) | wiki workflow 001 与 ADR 001–006 仍描述已下线的导图，需改写或归档，避免新会话误读。 | pending | — | 确认 workflow 001 与 ADR 001–006 是改写还是归档，再更新索引 | — |
