@@ -11,3 +11,4 @@
 | [005-导图自绘SVG零新依赖](005-导图自绘SVG零新依赖.md) | 布局、连线、缩放平移、浮窗全部自写（layout.ts 纯函数 + React SVG），不引 markmap/mermaid/d3；代价是布局与交互自己维护，千级节点要另想办法。 | accepted |
 | [006-视图状态用ref直接改DOM](006-视图状态用ref直接改DOM.md) | 平移缩放不再走 React state：视图放 ref，applyView() 一次写 <g transform>、缩放读数与浮窗坐标；React 只保留选中、浮窗、全屏三个状态。 | accepted |
 | [007-导图退出站点改用mermaid主题](007-导图退出站点改用mermaid主题.md) | 2026-11-18 站点撤下自研 mindmap 插件、删掉两篇 MINDMAP.md；次日启用官方 mermaid 主题。插件仓保留 0.1.0，ADR 001–006 从此只描述插件、不描述站点。 | accepted |
+| [008-知识笔记目录对齐归档编号](008-知识笔记目录对齐归档编号.md) | 2026-11-21 把 020-计算机 的二级目录从自拟空壳改成 090-归档 的编号分层，并迁移既有 13 篇笔记路径；React 与 Vue 是唯一例外。 | accepted |
