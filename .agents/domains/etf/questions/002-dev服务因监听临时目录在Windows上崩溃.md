@@ -27,6 +27,8 @@ server: { watch: { ignored: ["**/.*.tmpdir/**", "**/*.tmp"] } },
 
 改文件触发保存后，dev 进程保持运行：`http://localhost:5173` 与 `http://127.0.0.1:8080` 健康检查均 200。2026-11-16 实测：未加排除时连续崩两次（每次都以 `EBUSY` + 退出码 1 结束），加上后编辑期间不再崩。
 
+起服务验收时的端口口径（2026-11-21 turn 34 实测）：前端用 `http://localhost:5173`（Vite 只监听 `::1`），接口探针直连后端 `http://127.0.0.1:8080/api/…`——`localhost:5173` 上的 `/api` 拿到的是前端页面 HTML，按 JSON 解析必报错。
+
 ## 来源
 
 Plan `2026-11-16-证券估值看板`（session-b2019a1f-db96-4212-a7ee-b51e4a5adcb4 turn 11、12）；`repos/etf/vite.config.ts:15`。

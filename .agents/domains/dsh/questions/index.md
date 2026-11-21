@@ -22,3 +22,4 @@
 | [016-回合外墓碑会让会话日志加载失败](016-回合外墓碑会让会话日志加载失败.md) | 在 turn/end 之后追加空内容 system/message 墓碑，写入时能过、冷读时 v4 关系校验判整条历史损坏；修复要把它挪回所属回合最后一个 step 内并重排 seq。 |
 | [017-定时投递的dream取不到技能](017-定时投递的dream取不到技能.md) | 定时任务投递的消息 source.kind 是 schedule，技能手势只认 user、skill 工具又拒 disable-model-invocation，于是定时轮 dream 取不到技能、维护不跑。 |
 | [018-dream扫描把单引号status漏计](018-dream扫描把单引号status漏计.md) | scan 只剥双引号，单引号 status（合法 YAML）与 completed 比不相等，盘点里记成 note 0/N、spec 状态带引号。 |
+| [019-轮转后输入里的skill手势还触发吗](019-轮转后输入里的skill手势还触发吗.md) | 轮转把触发那条输入并进种子，用户手势仍命中并注入 skill；会丢的是更早轮次注入的技能正文，以及 /name 后面跟全角标点时的手势。 |
