@@ -13,7 +13,7 @@ description: "doc:<id> 只校验「写了没有」，不再校验目标文档存
 
 ## 原因
 
-第一版有 `validate.ts`：在 `allContentLoaded` 里读 `allContent["docusaurus-plugin-content-docs"]` 建 `frontMatter.id → permalink` 映射，引用目标不在映射里就抛错。改成渲染块、代码重构时这个文件与它的测试一起被删了（[005-导图渲染与交互](../plans/active/2026-11-13-思维导图插件/005-导图渲染与交互.md) 的「重构 + CR 修复」）。现在 `remark-mindmap.ts` 里只有：
+第一版有 `validate.ts`：在 `allContentLoaded` 里读 `allContent["docusaurus-plugin-content-docs"]` 建 `frontMatter.id → permalink` 映射，引用目标不在映射里就抛错。改成渲染块、代码重构时这个文件与它的测试一起被删了（[005-导图渲染与交互](../plans/reference/2026-11-13-文档内思维导图插件/005-导图渲染与交互.md) 的「重构 + CR 修复」）。现在 `remark-mindmap.ts` 里只有：
 
 - `DOC_ID_PATTERN` 匹配（必填 `[A-Za-z0-9-]+`），
 - 节点引用目标必须在本图编号集合里。
