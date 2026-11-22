@@ -5,7 +5,7 @@
 | Name | Description |
 | --- | --- |
 | [001-改了包内skill后安装的skill没更新](001-改了包内skill后安装的skill没更新.md) | 改包内 skill 后要构建 CLI 并 self skill install，两份目录成对提交。 |
-| [002-归档Plan的模板缺项不再报错](002-归档Plan的模板缺项不再报错.md) | reference/archived 是冻结内容，check 只校验未归档 Plan。 |
+| [002-归档Plan的模板缺项不再报错](002-归档Plan的模板缺项不再报错.md) | 下线前的 nnf 文档校验只查未归档 Plan 的模板缺项；现行 pi / dsh check 扫全部生命周期，不再有模板缺项这类规则。 |
 | [003-anki笔记更新返回成功但字段没变](003-anki笔记更新返回成功但字段没变.md) | Anki 浏览器占用笔记时写入可能静默失败。 |
 | [004-删除牌组连带子牌组和卡片](004-删除牌组连带子牌组和卡片.md) | deleteDecks 强制 cardsToo，删父牌组会连带整棵子树。 |
 | [005-nnf在bash里找不到](005-nnf在bash里找不到.md) | vite-plus\bin 的 nnf 只有 .cmd 转发器、Git Bash 不吃 PATHEXT，而 npm 全局 prefix 又随 cwd 的 node 版本变；改用 pnpm 全局安装。 |
