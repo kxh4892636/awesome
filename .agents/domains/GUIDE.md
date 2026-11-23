@@ -15,7 +15,7 @@
 - **DSH**（`dsh`）：`@kxh4892636/dsh-toolkit` 工具集与 DSH 版 Agent 预设（宿主侧完整形态）。词表见 [dsh/CONTEXT.md](dsh/CONTEXT.md)。
 - **nano-flow**：`nnf` CLI 只剩 `anki` / `self` / `fixture`；`workspace` 命令组与文档流程 skill 已于 2026-11-09 下线，流程改由 pi / dsh 的 nano-flow 实现提供。词表见 [nano-flow/CONTEXT.md](nano-flow/CONTEXT.md)。
 - **common**：跨域共享约定（工作区形态、容器仓与子仓、受管 skill、执行模态、同源实现、发布包依赖、Vite+ 工具链）。词表见 [common/CONTEXT.md](common/CONTEXT.md)。
-- **wiki**（`wiki`）：`repos/wiki` 是 Docusaurus 个人知识站，栏目 = `docs/` 一级编号目录，每级目录自带 `README.md` 落地页；知识笔记在 `020-计算机`，二级目录编号对齐 `090-归档`（[adr 008](wiki/adr/008-知识笔记目录对齐归档编号.md)），`020-八股文梳理` 只剩算法、非技术两个 tag 文件。**mindmap 插件已撤、改用 mermaid 主题**，`<Mindmap>` 只剩插件仓 0.1.0 与历史 note（[adr 007](wiki/adr/007-导图退出站点改用mermaid主题.md)）。词表见 [wiki/CONTEXT.md](wiki/CONTEXT.md)。
+- **wiki**（`wiki`）：`repos/wiki` 是 Docusaurus 个人知识站，栏目 = `docs/` 一级编号目录，每级目录自带 `README.md` 落地页；知识笔记在 `020-计算机`，二级目录编号对齐 `090-归档`（[adr 008](wiki/adr/008-知识笔记目录对齐归档编号.md)），`020-八股文梳理` 只剩算法、非技术两个 tag 文件。**mindmap 插件已撤、改用 mermaid 主题**，`<Mindmap>` 只剩插件仓 0.1.0 与历史 note（[adr 007](wiki/adr/007-导图退出站点改用mermaid主题.md)）。知识笔记一篇一卡、牌组跟目录走，增删改名后照 [003](wiki/workflows/003-同步知识笔记的Anki卡片/003-同步知识笔记的Anki卡片.md) 对齐。词表见 [wiki/CONTEXT.md](wiki/CONTEXT.md)。
 - **etf**（`etf`）：`repos/etf` 是单应用行情产品（client / server / shared），看板 = 摘要 + K 线/虚拟均线 + 估值双面板（四格读数单选一格决定下方分位折线）；证券目录五个指数，目录顺序即列表顺序与默认标的；数据落本机 SQLite 的 `daily_bars` 与 `security_valuation`，按需刷新、历史缺段走 `sync:market` / `sync:valuation`，加证券走 [003](etf/workflows/003-新增证券接入/003-新增证券接入.md)。词表见 [etf/CONTEXT.md](etf/CONTEXT.md)。
 - music / video 各自是产品域。全部入口见 [CONTEXT-MAP.md](CONTEXT-MAP.md)。
 
