@@ -1,6 +1,6 @@
 ---
 name: "018-cheatsheet用html分栏经chrome出png"
-description: "cheatsheet 用 Markdown 作源、HTML/CSS 分栏、Chrome headless 截 300dpi PNG；随包 marked 解析富文本与 mermaid，默认 4 栏。"
+description: "cheatsheet 用 Markdown 作源、HTML/CSS 分栏、Chrome headless 截 300dpi PNG；随包 marked 解析富文本与 mermaid，固定 5 栏。"
 status: accepted
 ---
 
@@ -22,9 +22,9 @@ status: accepted
 - 源是 Markdown（可 diff、可被 agent 直接写），PNG 是派生物，不手写 HTML/LaTeX；
 - 链路固定为 Markdown → `assets/sheet.html`（CSS 变量控制栏数、字号、页尺寸）→ Chrome headless 截图；
 - 分页在页面内完成：把每节拆成标题、块、列表项等单元，按单元顺序填满定高栏，栏底只剩不足一行；列表跨栏时续写成新的列表；
-- 页眉高度随字号算（`round(fontPx × 1.55 × 1.05) + 8`），并在其下留 8px 再起栏，避免大字号时标题压到首节；
+- 标题字号与正文解耦（`max(14px, 正文 × 2)`），页眉高度按标题算并在其下留 8px 再起栏，大小字号都不压首节；
 - `--fit <页数>` 二分字号，让内容刚好铺满指定页数；
-- 固定 A4 横向 4 栏、栏距 20px、6pt、300dpi：栏宽优先、行短好读；版面不开放栏数参数，页数是唯一的旋钮（配合 `--fit` 选字号）；
+- 固定 A4 横向 5 栏、栏距 10px、5pt、300dpi：栏宽与行宽锁在约 32 字/行；版面不开放栏数参数，页数是唯一的旋钮（配合 `--fit` 选字号）；
 - Markdown 交给随包 marked（约 100 KB，MIT）解析，覆盖 CommonMark + GFM：标题、粗斜体、删除线、链接、图片、引用、嵌套列表、表格、代码块、分隔线；
 - mermaid 随包（约 2.6 MB，MIT），只在源含 mermaid 代码块时注入页面；渲染完成后再测高度分页，图按实际尺寸参与排版；
 - 第三方产物放 `assets/vendor/`，加入 `.prettierignore` 与文件头 lint 豁免，构建时原样拷贝。

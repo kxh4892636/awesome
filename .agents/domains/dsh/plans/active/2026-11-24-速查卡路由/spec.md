@@ -1,6 +1,6 @@
 ---
 name: "速查卡路由"
-description: "给 learning 加 cheatsheet 子路由：按高频×难记取材、按知识形态分区，Markdown 经 marked 与 mermaid 渲染成固定 4 栏 A4 速查卡。"
+description: "给 learning 加 cheatsheet 子路由：按高频×难记取材、按知识形态分区，Markdown 经 marked 与 mermaid 渲染成固定 5 栏 A4 速查卡。"
 status: completed
 ---
 
@@ -11,7 +11,7 @@ status: completed
 ## 目标
 
 - 内容规则：按「高频 × 难记」取材，按知识形态分区，源是书时按 5%~8% 篇幅；
-- 版面规则：A4 横向、固定 4 栏、300dpi；
+- 版面规则：A4 横向、固定 5 栏、300dpi；
 - 渲染链路：Markdown → HTML/CSS → Chrome headless 截图。
 
 ## 交付
@@ -27,7 +27,7 @@ status: completed
 
 - 渲染走浏览器而不是 LaTeX/Typst：本机无 TeX 工具链，CSS 直接管折行、分栏与避头尾（[ADR 018](../../../adr/018-cheatsheet用html分栏经chrome出png.md)）；
 - 富文本交给 marked；mermaid 随包、按需注入；
-- 版面不开放栏数参数：固定 4 栏、栏距 20px，页数与字号是仅有的旋钮；
+- 版面不开放栏数参数：固定 5 栏、栏距 10px，页数与字号是仅有的旋钮；
 - 分页按单元填充，栏底只剩不足一行；列表跨栏续排，有序列表续编号。
 
 ## 验收
