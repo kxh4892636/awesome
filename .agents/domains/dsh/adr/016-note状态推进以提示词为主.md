@@ -29,7 +29,7 @@ check 也不报：spec 状态由 note 派生，note 停在 `pending` 不违反�
 
 ## 相关
 
-- [001-固定提示词补note状态推进规则](../plans/reference/2026-11-24-note状态推进约束/001-固定提示词补note状态推进规则.md) — 两包 `system.md` 的两行与断言
+- [001-固定提示词补note状态推进规则](../plans/reference/2026-11-24-note状态推进约束/001-固定提示词补note状态推进规则.md) — 两包 `system.md` 的一行与断言
 - [002-nano-flow-check增加pending未提交告警](../plans/reference/2026-11-24-note状态推进约束/002-nano-flow-check增加pending未提交告警.md) — `pacing.mjs` 的判定与两包接线
 - [004-两包校验规则是否同源](../../common/questions/004-两包校验规则是否同源.md) — 同源范围已纳入 `pacing.mjs`
 - [006-note阻塞态以reason表达](006-note阻塞态以reason表达.md) — 状态与 `reason` 口径
