@@ -4,7 +4,7 @@ description: "check 对 active+pending+未提交+有正文的 note 报警；无 
 status: blocked
 reason: "实现与测试已通过，待用户验收"
 related_noted: []
-next_step: "用户验收后置 completed；003 继续发布"
+next_step: "用户验收后置 completed；003/004 已交付"
 ---
 
 # 002-nano-flow-check增加pending未提交告警

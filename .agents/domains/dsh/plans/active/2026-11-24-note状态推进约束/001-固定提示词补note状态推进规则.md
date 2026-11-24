@@ -4,7 +4,7 @@ description: "dsh 与 pi 的 system.md 补「开工即 in_progress」两行，�
 status: blocked
 reason: "实现与测试已通过，待用户验收"
 related_noted: []
-next_step: "用户验收后置 completed；003 继续发布"
+next_step: "用户验收后置 completed；003/004 已交付"
 ---
 
 # 001-固定提示词补note状态推进规则
