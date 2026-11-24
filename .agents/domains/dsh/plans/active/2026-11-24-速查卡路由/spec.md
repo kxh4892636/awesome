@@ -16,7 +16,7 @@ status: completed
 
 ## 交付
 
-- `repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md` — 7 节规则（上卡 / 提炼 / 分区 / 篇幅 / 版式 / 渲染 / 验收）；
+- `repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md` — 8 节规则（上卡 / 提炼 / 分区 / 条目写法 / 篇幅 / 版式 / 渲染 / 验收）；
 - `.../scripts/render-sheet.mjs` — 解析、分页、截图、指标；
 - `.../assets/sheet.html` — 版面模板；
 - `.../assets/vendor/` — marked 与 mermaid；
@@ -36,6 +36,7 @@ status: completed
 
 - 首个真实用例：计算机网络（529 页书 + 本地笔记）按 3% 上限重做，出 703 条、16,138 字，8 分区 30 子区，5pt 排 2 页、填充 98%，压缩比 2.7%，拼成 3369×4764 单张 PNG；
 - 19,684 字样例：6pt 出 5 页、5.5pt 出 4 页；页 1 末行距纸边 53px，等于版心留白；
+- 条目写法有据可查：§4 指向 SKILL 第 3 节，收紧到 25~40 字、每子区 3~6 条、每页至少 1 张 mermaid；验收接 `note-metrics.py` 与图计数；
 - 富文本样例覆盖粗斜体、删除线、链接、引用、嵌套列表、表格、代码块、flowchart 与 sequenceDiagram；
 - 层级用例：4,392 字样例排 1 页，`##` 分区与 `###` 子区各自成形，45 项有序列表跨 3 栏续编号，子区标题不落栏底；
 - `pnpm build`、`pnpm check`、`nano_flow_check` 通过。
