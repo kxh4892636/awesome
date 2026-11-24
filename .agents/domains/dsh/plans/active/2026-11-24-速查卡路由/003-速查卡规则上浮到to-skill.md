@@ -18,11 +18,11 @@ next_step: 无
 
 ## 过程
 
-- `bb929be` 加了 **Headings**（最多 4 层）与 **Budget**（5%~8%）两行；
+- 先加了 **Headings**（最多 4 层）与 **Budget**（5%~8%）两行；
 - 用户指出这是速查卡规则，不该动 to-skill；
-- `6e9f746` 把 to-skill 恢复到 `c4a1e47` 的内容，文件与改前逐字一致。
+- 随后回退，to-skill 与改动前逐字一致；两次提交在 2026-11-25 的历史压缩中合并，哈希不再保留。
 
 ## 验收
 
-- `git diff c4a1e47 HEAD -- src/nano-flow/skills/to-skill/SKILL.md` 为空；
+- to-skill 里不含 `Headings` / `Budget` 两行，与速查卡工作开始前一致；
 - CHEATSHEET §4 用 3%，§5 用 4 层，两处口径不交叉。
