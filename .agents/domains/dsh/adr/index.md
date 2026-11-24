@@ -20,3 +20,4 @@
 | [014-dream按存量与盘点维护而不只吃增量](014-dream按存量与盘点维护而不只吃增量.md) | dream 的输入除游标后的新 turn 外，还包括每域全部 active+reference 的存量 Plan 与领域文档盘点；无增量轮次照样复核，并可归档无用的 reference Plan。 | accepted |
 | [015-轮转不扣用户promptRPC](015-轮转不扣用户promptRPC.md) | 轮转命中后立即回 accepted，四步在后台跑，避免客户端断连丢消息与输入框残留。 | — |
 | [016-note状态推进以提示词为主](016-note状态推进以提示词为主.md) | 开工即 in_progress 靠固定提示词落地；check 只对 active+pending 且有未提交改动的 note 报警，不改状态、不派生。 | accepted |
+| [017-pretty-doc产出飞书文档并走svg画板](017-pretty-doc产出飞书文档并走svg画板.md) | 手调 pretty-doc 只产出飞书文档：DocxXML 承载版式，diagram-design 的 SVG 经 larkify 内联后进画板；配色改用 Lark 色板。 | accepted |
