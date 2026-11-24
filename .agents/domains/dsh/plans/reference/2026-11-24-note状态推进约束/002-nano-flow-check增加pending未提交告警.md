@@ -1,10 +1,10 @@
 ---
 name: "002-nano-flow-check增加pending未提交告警"
 description: "check 对 active+pending+未提交+有正文的 note 报警；无 git 静默跳过，两包同改。"
-status: blocked
-reason: "实现与测试已通过，待用户验收"
+status: completed
+reason:
 related_noted: []
-next_step: "用户验收后置 completed；003/004 已交付"
+next_step: "已交付并验收；告警条件见 ADR 016"
 ---
 
 # 002-nano-flow-check增加pending未提交告警

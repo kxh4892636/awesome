@@ -10,7 +10,7 @@ status: accepted
 
 note 的四个状态里只有两端有口径：交付完成未验收一律 `blocked`、用户验收后才 `completed`（[006](006-note阻塞态以reason表达.md)）。中间那段在 2026-11-09 取消「状态先行」后没人管——那轮取消的理由是「每次状态变更一次写入」太贵，不是状态不该推进（[009-调研Plan写入现状与惰性化取舍](../plans/reference/2026-11-09-nano-flow优化迭代/009-调研Plan写入现状与惰性化取舍.md)）。
 
-现场因此是「默认不用、偶尔用」：19/84 条 note 在 `pending` 下改过正文，54/170 次提交落在 `pending`；077/081/082/083 各 11/4/10/3 次提交、0 次 `in_progress`，而同一天 078 置过一次并保持 10 次提交（口径与来源见 [spec](../plans/active/2026-11-24-note状态推进约束/spec.md) 的「证据」）。面板上的 `in_progress` 近乎空档，看不出哪条正在做。
+现场因此是「默认不用、偶尔用」：19/84 条 note 在 `pending` 下改过正文，54/170 次提交落在 `pending`；077/081/082/083 各 11/4/10/3 次提交、0 次 `in_progress`，而同一天 078 置过一次并保持 10 次提交（口径与来源见 [spec](../plans/reference/2026-11-24-note状态推进约束/spec.md) 的「证据」）。面板上的 `in_progress` 近乎空档，看不出哪条正在做。
 
 check 也不报：spec 状态由 note 派生，note 停在 `pending` 不违反任何规则。
 
@@ -29,7 +29,7 @@ check 也不报：spec 状态由 note 派生，note 停在 `pending` 不违反�
 
 ## 相关
 
-- [001-固定提示词补note状态推进规则](../plans/active/2026-11-24-note状态推进约束/001-固定提示词补note状态推进规则.md) — 两包 `system.md` 的两行与断言
-- [002-nano-flow-check增加pending未提交告警](../plans/active/2026-11-24-note状态推进约束/002-nano-flow-check增加pending未提交告警.md) — `pacing.mjs` 的判定与两包接线
+- [001-固定提示词补note状态推进规则](../plans/reference/2026-11-24-note状态推进约束/001-固定提示词补note状态推进规则.md) — 两包 `system.md` 的两行与断言
+- [002-nano-flow-check增加pending未提交告警](../plans/reference/2026-11-24-note状态推进约束/002-nano-flow-check增加pending未提交告警.md) — `pacing.mjs` 的判定与两包接线
 - [004-两包校验规则是否同源](../../common/questions/004-两包校验规则是否同源.md) — 同源范围已纳入 `pacing.mjs`
 - [006-note阻塞态以reason表达](006-note阻塞态以reason表达.md) — 状态与 `reason` 口径

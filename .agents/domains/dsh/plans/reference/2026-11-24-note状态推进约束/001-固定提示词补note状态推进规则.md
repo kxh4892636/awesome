@@ -1,10 +1,10 @@
 ---
 name: "001-固定提示词补note状态推进规则"
 description: "dsh 与 pi 的 system.md 补「开工即 in_progress」一行，按 to-skill 收敛措辞并加断言。"
-status: blocked
-reason: "一行文案已合入 dsh/pi，测试通过，待用户验收"
+status: completed
+reason:
 related_noted: []
-next_step: "用户验收后置 completed；003/004 已交付"
+next_step: "已交付并验收；规则见 ADR 016"
 ---
 
 # 001-固定提示词补note状态推进规则
