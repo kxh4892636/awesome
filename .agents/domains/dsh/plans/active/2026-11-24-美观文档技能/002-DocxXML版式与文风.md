@@ -23,5 +23,7 @@ next_step:
 
 ## 证据
 
+- 2026-11-24：h1 前空段按用户要求改为一个（曾回退为两个，最终定为一个）。
+
 - 长文验证文档：[长文层级与多观点验证](https://bytedance.larkoffice.com/docx/BcM5dVDX6owTtUx9FRoc2hMjnyh)，parse `passed`，char_count 315。
 - 主示例：[把素材写成一篇能读的飞书文档](https://bytedance.larkoffice.com/docx/PMWUdwWBzom0wkxfs6wcLXdSn9e)，parse `passed`。
