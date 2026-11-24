@@ -21,6 +21,7 @@ status: completed
 - `.../assets/sheet.html` — 版面模板；
 - `.../assets/vendor/` — marked 与 mermaid；
 - `SKILL.md` 指针与 description；
+- [to-skill/SKILL.md](../../../../../../repos/dsh-toolkit/src/nano-flow/skills/to-skill/SKILL.md) — 通用规则上浮：Headings 最多 4 层、Budget 5%~8%；
 - 领域文档：ADR 018、CONTEXT 一句。
 
 ## 关键决策
@@ -29,6 +30,7 @@ status: completed
 - 富文本交给 marked；mermaid 随包、按需注入；
 - 固定 5 栏、栏距 10px、栏底留 18px；页数与字号是仅有的旋钮；
 - 分页按单元填充，栏底只剩不足一行；列表跨栏续排，有序列表续编号；
+- 层级与篇幅是通用写作规则，权威位置放 to-skill（Headings / Budget），速查卡只留自己的 5 栏换算；
 - 文风不单列：2026-11-24 用户删掉「条目」「文风」两节后，卡片沿用 [SKILL.md](../../../../../../repos/dsh-toolkit/src/nano-flow/skills/learning/SKILL.md) 第 3 节，只保留渲染与版面规则。
 
 ## 验收
