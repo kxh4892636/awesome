@@ -1,29 +1,28 @@
 ---
 name: "003-速查卡规则上浮到to-skill"
-description: "把压缩比例与多级标题两条通用规则写进 to-skill：Headings 最多 4 层，Budget 按源材料 5%~8%。"
+description: "结论：压缩比例与多级标题两条规则留在 learning 的 CHEATSHEET.md；写进 to-skill 的两行已回退。"
 status: completed
 related_noted:
   - "001-速查卡路由与版面规则"
 next_step: 无
 ---
 
-# 003 速查卡规则上浮到 to-skill
+# 003 规则归属：留在 learning
 
-速查卡里两条规则其实是通用写作规则，换成任何交付物都成立，所以上浮到 [to-skill](../../../../../../repos/dsh-toolkit/src/nano-flow/skills/to-skill/SKILL.md)，速查卡只留自己的配额。
+2026-11-24 曾把「压缩比例」与「多级标题」作为通用规则写进 [to-skill](../../../../../../repos/dsh-toolkit/src/nano-flow/skills/to-skill/SKILL.md)，用户澄清后全部回退。
 
-## 交付
+## 结论
 
-- to-skill 的「信息层级」加 **Headings**：标题最多 4 层，skill 名 → 分区（`##`）→ 子分区（`###`）→ 条目；两级说得清就不开三级；
-- to-skill 的「Pruning」加 **Budget**：篇幅跟着源材料走，书或长文档取 5%~8%，上限不是配额；到上限还装不下就下沉成 reference，分区只留指针；
-- 两条都用 leading word 起头，与现有 **Sprawl** / **Co-location** / **Relevance** / **No-ops** 同形。
+- 两条规则是速查卡自己的写法，权威位置在 [CHEATSHEET.md](../../../../../../repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md)：§4 篇幅（书 3%）、§5 版式（最多 4 层）；
+- to-skill 保持原样，只讲循环、信息层级、leading words 与 pruning，不掺交付物的配额。
 
-## 为什么放这里
+## 过程
 
-- 归位：`##` / `###` 的分层与 5%~8% 的篇幅预算管的是「写多少、怎么分层」，不是速查卡专有；
-- 不重复：速查卡留自己的换算（5 栏、约 8,700 字/页、一页一个查找场景），to-skill 只给通用口径；
-- 副作用可控：to-skill 只多两行，没有新开 section，仍守它自己的 Sprawl 与 No-ops 要求。
+- `bb929be` 加了 **Headings**（最多 4 层）与 **Budget**（5%~8%）两行；
+- 用户指出这是速查卡规则，不该动 to-skill；
+- `6e9f746` 把 to-skill 恢复到 `c4a1e47` 的内容，文件与改前逐字一致。
 
 ## 验收
 
-- to-skill 正文 7 行新增生效，`pnpm build`、`pnpm check`、`nano_flow_check` 通过；
-- 0.5.94 已装进 web profile，安装副本里两条规则可见。
+- `git diff c4a1e47 HEAD -- src/nano-flow/skills/to-skill/SKILL.md` 为空；
+- CHEATSHEET §4 用 3%，§5 用 4 层，两处口径不交叉。
