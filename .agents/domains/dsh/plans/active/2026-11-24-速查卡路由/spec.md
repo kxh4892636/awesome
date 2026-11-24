@@ -16,7 +16,7 @@ status: completed
 
 ## 交付
 
-- `repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md` — 按 NOTE 体例的 4 节（结构 / 内容 / 版式与渲染 / 模板），70 行；
+- `repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md` — 按 NOTE 体例的 4 节（结构 / 内容 / 版式与渲染 / 模板），53 行，含 19 行 Git 卡示例；
 - `.../scripts/render-sheet.mjs` — 解析、分页、截图、指标；
 - `.../assets/sheet.html` — 版面模板；
 - `.../assets/vendor/` — marked 与 mermaid；
