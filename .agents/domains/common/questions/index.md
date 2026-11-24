@@ -7,7 +7,7 @@
 | [001-发布包依赖能写catalog吗](001-发布包依赖能写catalog吗.md) | 发布包的生产依赖字段不能写 catalog:，安装方会报 EUNSUPPORTEDPROTOCOL。 |
 | [002-覆盖率门槛在哪跑](002-覆盖率门槛在哪跑.md) | 覆盖率阈值写在各包自己的 vite/vitest 配置里，按目标包执行测试。 |
 | [003-commit时文件被自动改写](003-commit时文件被自动改写.md) | 提交钩子会在 commit 前对暂存文件执行 vp check --fix 并重新暂存。 |
-| [004-两包校验规则是否同源](004-两包校验规则是否同源.md) | 两包各带一份 check-domain.mjs：checks / render / fix 逐字一致，base.mjs 仅默认上限按宿主不同（pi 233 字、GUIDE 13 KB；dsh 144 字、GUIDE 21 KB）；改规则两包同改。 |
+| [004-两包校验规则是否同源](004-两包校验规则是否同源.md) | 两包各带一份 check-domain.mjs：checks / render / fix / pacing 逐字一致，base.mjs 仅默认上限按宿主不同（pi 233 字、GUIDE 13 KB；dsh 144 字、GUIDE 21 KB）；改规则两包同改。 |
 | [005-跑测试会不会在tmp留目录](005-跑测试会不会在tmp留目录.md) | 判断哪个包的测试外溢临时目录：按前缀统计 /tmp 前后数量；当前只有 repos/music 曾漏，已修，其余包自带清理。 |
 | [006-两包随包skill是否同源](006-两包随包skill是否同源.md) | pi-toolkit 与 dsh-toolkit 各带一份 skill 树：同名 9 个文件逐字一致，learning/ANKI.md 只差一行宿主调用语法；改共享 skill 两包同改，没有脚本兜底。 |
 | [007-私有仓的tgz制品为什么装不上](007-私有仓的tgz制品为什么装不上.md) | 私有仓的 Release 资产与 raw 链接都要登录态，pnpm 匿名拉取会 404；解法是把仓转 public 并把 tgz 提交进 release/。 |

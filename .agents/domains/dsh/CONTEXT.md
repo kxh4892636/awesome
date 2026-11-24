@@ -54,6 +54,8 @@ _Avoid_：流程开关、nano-flow 命令行
 
 **固定提示词**：
 `prompts/system.md` 的正文（源码在 `session/prompts/`，发布布局仍是 `dist/nano-flow/prompts/`，见 [ADR 012](adr/012-源码按能力分层.md)），与 `.agents/domains/GUIDE.md` 的会话启动快照、`prompts/limit.md` 生成的篇幅限制块一起作为系统提示词段注入。
+
+note 状态推进也落在这一段：开工即 `in_progress`——轮首批量写先把状态置上，中途才定的就在第一次改正文前补一次只改 YAML 头的写入（不占批量写额度）；`pending` 只表示还没开始（[ADR 016](adr/016-note状态推进以提示词为主.md)）。
 _Avoid_：persona、系统提示
 
 > 纠正（2026-11-08，note 006）：本节原写 `prompts/agents.md`；该文件已改名为 `prompts/system.md`，注入段名 `nano-flow:system`（原名会被当作 `AGENTS.md` 自动注入）。
@@ -63,7 +65,7 @@ _Avoid_：persona、系统提示
 _Avoid_：wiki、知识库、notes.json
 
 **文档校验**：
-`nano_flow_check` 对领域文档做的三件事：按 YAML 头、编号、篇幅与 `## 相关` 规则校验；生成全部索引、`CONTEXT-MAP.md` 与 spec 的追踪表；就地修「结果由既有事实唯一确定」的问题——spec 状态按 note 派生、`name` 对齐文件名并把改名传播到 `related_noted`、非 blocked 的 `reason` 清掉、多行头字段折成单行、缺 `questions/` 建目录。修完报「已自动修复 N 项」，再跑一次为 0 才算收敛；篇幅超限、`## 相关` 目标缺失或原因为空、真实编号缺口、blocked 缺 `reason` 只报错不猜。写文件经过工作区边界检查、临时文件 rename、内容相同则不写。
+`nano_flow_check` 对领域文档做的三件事：按 YAML 头、编号、篇幅与 `## 相关` 规则校验；生成全部索引、`CONTEXT-MAP.md` 与 spec 的追踪表；就地修「结果由既有事实唯一确定」的问题——spec 状态按 note 派生、`name` 对齐文件名并把改名传播到 `related_noted`、非 blocked 的 `reason` 清掉、多行头字段折成单行、缺 `questions/` 建目录。修完报「已自动修复 N 项」，再跑一次为 0 才算收敛；篇幅超限、`## 相关` 目标缺失或原因为空、真实编号缺口、blocked 缺 `reason` 只报错不猜。写文件经过工作区边界检查、临时文件 rename、内容相同则不写。另有只提醒不改的一项：`pacing` 警告——`active` Plan 里 `pending` 的 note 正文超过 120 字节、description 不以「占位」开头、且已跟踪但有未提交改动（git M/R）时，提示「第一次改正文前应置 in_progress」；不计入 `ok`、不写盘、不派生 spec 状态，环境没有 git 或取值失败就跳过该告警。
 _Avoid_：自动纠正、静默改写
 
 **Plan**：
