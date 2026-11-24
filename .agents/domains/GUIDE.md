@@ -12,17 +12,17 @@
 ## 领域
 
 - **pi**（`pi`）：当前主力扩展域，`@kxh4892636/pi-toolkit` 一个包五个开关（nestedSkills / sessionName / webTools / askQuestions / nanoFlow），Nano Flow 也在这里实现；Command Code provider 只上架 DeepSeek、默认开思考（[adr 007](pi/adr/007-commandcode只上架DeepSeek并默认开思考.md)）。词表见 [pi/CONTEXT.md](pi/CONTEXT.md)。
-- **DSH**（`dsh`）：`@kxh4892636/dsh-toolkit` 工具集与 DSH 版 Agent 预设（宿主侧完整形态）。词表见 [dsh/CONTEXT.md](dsh/CONTEXT.md)。
+- **DSH**（`dsh`）：`@kxh4892636/dsh-toolkit` 工具集与 DSH 版 Agent 预设（宿主侧完整形态）；手调 `pretty-doc` 产出飞书文档（[adr 017](dsh/adr/017-pretty-doc产出飞书文档并走svg画板.md)）。词表见 [dsh/CONTEXT.md](dsh/CONTEXT.md)。
 - **nano-flow**：`nnf` CLI 只剩 `anki` / `self` / `fixture`；`workspace` 命令组与文档流程 skill 已于 2026-11-09 下线，流程改由 pi / dsh 的 nano-flow 实现提供。词表见 [nano-flow/CONTEXT.md](nano-flow/CONTEXT.md)。
 - **common**：跨域共享约定（工作区形态、容器仓与子仓、受管 skill、执行模态、同源实现、发布包依赖、Vite+ 工具链）。词表见 [common/CONTEXT.md](common/CONTEXT.md)。
-- **wiki**（`wiki`）：`repos/wiki` 是 Docusaurus 个人知识站，栏目 = `docs/` 一级编号目录，每级目录自带 `README.md` 落地页；知识笔记在 `020-计算机`，二级目录编号对齐 `090-归档`（[adr 008](wiki/adr/008-知识笔记目录对齐归档编号.md)），`020-八股文梳理` 只剩算法、非技术两个 tag 文件。**mindmap 插件已撤、改用 mermaid 主题**，`<Mindmap>` 只剩插件仓 0.1.0 与历史 note（[adr 007](wiki/adr/007-导图退出站点改用mermaid主题.md)）。知识笔记一篇一卡、牌组跟目录走，增删改名后照 [003](wiki/workflows/003-同步知识笔记的Anki卡片/003-同步知识笔记的Anki卡片.md) 对齐。词表见 [wiki/CONTEXT.md](wiki/CONTEXT.md)。
+- **wiki**（`wiki`）：`repos/wiki` 是 Docusaurus 个人知识站，栏目 = `docs/` 一级编号目录，每级目录自带 `README.md` 落地页；知识笔记在 `020-计算机`，二级目录编号对齐 `090-归档`（[adr 008](wiki/adr/008-知识笔记目录对齐归档编号.md)），其中 `030-工程化` 与 `040-系统设计` 已平铺成一层（后者 45 篇，2026-11-24）；`020-八股文梳理` 只剩算法、非技术两个 tag 文件。**mindmap 插件已撤、改用 mermaid 主题**，`<Mindmap>` 只剩插件仓 0.1.0 与历史 note（[adr 007](wiki/adr/007-导图退出站点改用mermaid主题.md)）。知识笔记一篇一卡、牌组跟目录走，增删改名后照 [003](wiki/workflows/003-同步知识笔记的Anki卡片/003-同步知识笔记的Anki卡片.md) 对齐。词表见 [wiki/CONTEXT.md](wiki/CONTEXT.md)。
 - **etf**（`etf`）：`repos/etf` 是单应用行情产品（client / server / shared），看板 = 摘要 + K 线/虚拟均线 + 估值双面板（四格读数单选一格决定下方分位折线）；证券目录五个指数，目录顺序即列表顺序与默认标的；数据落本机 SQLite 的 `daily_bars` 与 `security_valuation`，按需刷新、历史缺段走 `sync:market` / `sync:valuation`，加证券走 [003](etf/workflows/003-新增证券接入/003-新增证券接入.md)。词表见 [etf/CONTEXT.md](etf/CONTEXT.md)。
 - music / video 各自是产品域。全部入口见 [CONTEXT-MAP.md](CONTEXT-MAP.md)。
 
 ## 不可违反的约定
 
 - 生成物只由 `nano_flow_check` 写：`CONTEXT-MAP.md`、各 `index.md`、`notes_index.md`、spec 的 `## 追踪 Note`。它还就地修「由既有事实唯一确定」的问题并报「已自动修复 N 项」，再跑一次为 0 才收敛（[dsh 文档校验](dsh/CONTEXT.md)）。
-- Plan 是唯一权威状态；note 四态 `pending / in_progress / blocked / completed`，`blocked` 必带 `reason` 写清在等什么（[006](dsh/adr/006-note阻塞态以reason表达.md)）。
+- Plan 是唯一权威状态；note 四态 `pending / in_progress / blocked / completed`，`blocked` 必带 `reason` 写清在等什么（[006](dsh/adr/006-note阻塞态以reason表达.md)）；开工即 `in_progress`，check 只对 `active` 下 `pending` 且有未提交改动告警（[016](dsh/adr/016-note状态推进以提示词为主.md)）。
 - 一条 note = 一个可独立验收的交付单元，同单元返工并入、不新开（[010](dsh/adr/010-note按交付单元划分.md)）。
 - 每轮最多两次批量写（轮首记方向、轮末补进度与证据），每批之后跑一次 `nano_flow_check`；面板与索引一轮之内允许滞后。
 - 恢复已有 Plan 的那一轮只读：先 `nano_flow_bind`，再只报告，等用户第一条后续消息放行。
@@ -40,13 +40,13 @@
 
 ## 热点入口
 
-- `status: completed` 但仍在 `active`、等用户确认才迁 `reference` 的 Plan：wiki [2026-11-21-八股文转知识笔记](wiki/plans/active/2026-11-21-八股文转知识笔记/spec.md)（五个 tag 迁成知识笔记、目录按 [adr 008](wiki/adr/008-知识笔记目录对齐归档编号.md) 重排）。
+- `status: completed` 但仍在 `active`、等用户确认才迁 `reference` 的 Plan：wiki [2026-11-21-八股文转知识笔记](wiki/plans/active/2026-11-21-八股文转知识笔记/spec.md)（五个 tag 迁成知识笔记、19 条 note 全 completed、目录按 [adr 008](wiki/adr/008-知识笔记目录对齐归档编号.md) 重排）。
 - 本工作区形态的来源：[common 2026-11-14-拆分单仓为多仓库](common/plans/reference/2026-11-14-拆分单仓为多仓库/spec.md)（9 条 note 全 completed，九仓拆出并推到 public，容器仓改名 awesome）。
 - 已迁 `reference` 的近期 Plan：wiki [2026-11-13-文档内思维导图插件](wiki/plans/reference/2026-11-13-文档内思维导图插件/spec.md)（8 条，站点已于 2026-11-18/19 撤下，历史见 [adr 007](wiki/adr/007-导图退出站点改用mermaid主题.md)）、dsh [2026-11-13-Windows测试假红与轮转绑定](dsh/plans/reference/2026-11-13-Windows测试假红与轮转绑定/spec.md)（375 例全绿，0.5.51）、music [2026-11-11-自动播放倒计时](music/plans/reference/2026-11-11-自动播放倒计时/spec.md)（已上线）、dsh [2026-11-13-nano-flow功能与链路梳理](dsh/plans/reference/2026-11-13-nano-flow功能与链路梳理/spec.md) 与 [2026-11-13-dsh与pi对齐](dsh/plans/reference/2026-11-13-dsh与pi对齐/spec.md)（0.5.47→0.5.48 发布验收）、pi [2026-11-09-pi-toolkit插件](pi/plans/reference/2026-11-09-pi-toolkit插件/spec.md)（含 013 `/dream` 与 014 轨迹落盘）、dsh [2026-11-19-面板恢复默认](dsh/plans/reference/2026-11-19-面板恢复默认/spec.md)（面板复位已上线）、dsh [2026-11-20-轮转与调用方断连解耦](dsh/plans/reference/2026-11-20-轮转与调用方断连解耦/spec.md)（收口在 [adr 015](dsh/adr/015-轮转不扣用户promptRPC.md)）、etf [2026-11-16-证券估值看板](etf/plans/reference/2026-11-16-证券估值看板/spec.md)（估值双面板与 `sync:valuation`，数据链路见 [etf 002](etf/workflows/002-估值数据接入/002-估值数据接入.md)，2026-11-22 迁入）。
 - 更早的 dsh Plan：[2026-11-09-nano-flow优化迭代](dsh/plans/reference/2026-11-09-nano-flow优化迭代/spec.md)（16 条，收口在 [源码按能力分层](dsh/adr/012-源码按能力分层.md)）。
 - 源码：pi 侧 `repos/pi-toolkit/src/nano-flow/`（`prompts/system.md`、`prompts/dream.md`、`scripts/check-domain.mjs`、`skills/`）；dsh 侧 `repos/dsh-toolkit/src/nano-flow/` 按能力分六目录（assembly / session / documents / planning / dream / skills），预设挂 `dsh-tool-executor-ptc`（[011](dsh/adr/011-预设挂PTC执行器.md)）。
 - 交付工作流：[pi 001 安装并真机验收](pi/workflows/001-安装pi-toolkit并真机验收/001-安装pi-toolkit并真机验收.md)、[dsh 001 发布并真机验收](dsh/workflows/001-发布dsh-toolkit并真机验收/001-发布dsh-toolkit并真机验收.md)（含 nano-flow 侧走查清单）、[etf 002 估值数据接入](etf/workflows/002-估值数据接入/002-估值数据接入.md)、[music 001 部署曲库与站点](music/workflows/001-部署曲库与站点到服务器/001-部署曲库与站点到服务器.md)、[common 001 Vite+ 大版本升级](common/workflows/001-vite-plus大版本升级/001-vite-plus大版本升级.md)、[common 002 拆分单仓为多个独立仓](common/workflows/002-拆分单仓为多个独立仓/002-拆分单仓为多个独立仓.md)。
-- 常见坑：[dsh 问题索引](dsh/questions/index.md)——恢复只读、预设出现但工具缺失、历史加载失败、PATH 上的 dsh 装错 profile、宿主悬浮提示的锚点与宽度、dream 游标路径、定时投递取不到 dream 技能、轮转后 skill 手势还在不在、scan 的「需要留意」与「单引号 status 漏计」、Windows 上单测假红的平台假设；[etf 问题索引](etf/questions/index.md)——上游 `count` 截断历史、Windows 上 Vite 监听临时目录把 dev 撞崩、E2E 单点失败连带后续旅程假红；[wiki 问题索引](wiki/questions/index.md)——MDX 把 `doc:` 后缀吃成指令、本地起站只监听 `::1`、`doc:` 写错 build 不报错、导图样式两份副本；[common 问题索引](common/questions/index.md)——私有仓制品装不上、bsk 操作 GitHub 失败、发布包依赖、覆盖率门槛、两包校验规则与随包 skill 的同源程度、本机没有 `bash` 怎么切片轨迹；[pi 问题索引](pi/questions/index.md)——轨迹残留旧目录、overlay 格子底色、commandcode 403 套餐权限；[music 问题索引](music/questions/index.md)——音频 e2e 的墙钟与真浏览器、node 环境下 zustand 持久化断言；[nano-flow 问题索引](nano-flow/questions/index.md)——受管 skill 不更新、`nnf` 在 bash 里找不到。
+- 常见坑：[dsh 问题索引](dsh/questions/index.md)——恢复只读、预设缺工具、悬浮提示锚点、dream 游标与定时投递、轮转后 skill 手势、scan 漏计、Windows 假红；[etf 问题索引](etf/questions/index.md)——上游 `count` 截断历史、Windows 上 Vite 监听临时目录把 dev 撞崩、E2E 单点失败连带后续旅程假红；[wiki 问题索引](wiki/questions/index.md)——MDX 把 `doc:` 后缀吃成指令、本地起站只监听 `::1`、`doc:` 写错 build 不报错、导图样式两份副本；[common 问题索引](common/questions/index.md)——私有仓制品装不上、bsk 操作 GitHub 失败、发布包依赖、覆盖率门槛、两包校验规则与随包 skill 的同源程度、本机没有 `bash` 怎么切片轨迹；[pi 问题索引](pi/questions/index.md)——轨迹残留旧目录、overlay 格子底色、commandcode 403 套餐权限；[music 问题索引](music/questions/index.md)——音频 e2e 的墙钟与真浏览器、node 环境下 zustand 持久化断言；[nano-flow 问题索引](nano-flow/questions/index.md)——受管 skill 不更新、`nnf` 在 bash 里找不到。
 
 ## 用法
 
