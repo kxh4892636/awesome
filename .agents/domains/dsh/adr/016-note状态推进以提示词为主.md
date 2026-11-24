@@ -16,7 +16,7 @@ check 也不报：spec 状态由 note 派生，note 停在 `pending` 不违反�
 
 ## 决策
 
-主杠杆放固定提示词——dsh 与 pi 的 `system.md` note 段各两行、逐字一致：开工即 `in_progress`（轮首批量写先把状态置上；中途才定的，在第一次改正文前补一次只改 YAML 头的写入，不占批量写额度），`pending` 只表示还没开始。
+主杠杆放固定提示词——dsh 与 pi 的 `system.md` note 段各一行、逐字一致：开工即 `in_progress`。
 
 `nano_flow_check` 只做旁证：`active` Plan 里 `pending` 的 note 若正文超过 120 字节、description 不以「占位」开头、且已跟踪但有未提交改动（`git status` 的 M/R），报一条 `pacing` 警告。不自动改状态、不从告警派生 spec 状态、不新增 spec 模板骨架。
 

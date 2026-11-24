@@ -55,7 +55,7 @@ _Avoid_：流程开关、nano-flow 命令行
 **固定提示词**：
 `prompts/system.md` 的正文（源码在 `session/prompts/`，发布布局仍是 `dist/nano-flow/prompts/`，见 [ADR 012](adr/012-源码按能力分层.md)），与 `.agents/domains/GUIDE.md` 的会话启动快照、`prompts/limit.md` 生成的篇幅限制块一起作为系统提示词段注入。
 
-note 状态推进也落在这一段：开工即 `in_progress`——轮首批量写先把状态置上，中途才定的就在第一次改正文前补一次只改 YAML 头的写入（不占批量写额度）；`pending` 只表示还没开始（[ADR 016](adr/016-note状态推进以提示词为主.md)）。
+note 状态推进也落在这一段：开工即 `in_progress`（[ADR 016](adr/016-note状态推进以提示词为主.md)）。
 _Avoid_：persona、系统提示
 
 > 纠正（2026-11-08，note 006）：本节原写 `prompts/agents.md`；该文件已改名为 `prompts/system.md`，注入段名 `nano-flow:system`（原名会被当作 `AGENTS.md` 自动注入）。

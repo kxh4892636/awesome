@@ -19,7 +19,7 @@ note 从第一次改正文起进入 `in_progress`，不再长期停在 `pending`
 
 ## 交付
 
-- [001-固定提示词补note状态推进规则](001-固定提示词补note状态推进规则.md)：dsh + pi 的 `system.md` 各加 2 行，按 to-skill 风格；补断言。
+- [001-固定提示词补note状态推进规则](001-固定提示词补note状态推进规则.md)：dsh + pi 的 `system.md` 各加 1 行，按 to-skill 风格；补断言。
 - [002-nano-flow-check增加pending未提交告警](002-nano-flow-check增加pending未提交告警.md)：active + pending + 未提交 + 有正文 → warning；无 git 静默跳过；两包同改。
 - [003-发布0.5.82并真机验收](003-发布0.5.82并真机验收.md)：patch、构建、pack、安装、push、验收。
 - [004-领域文档收口](004-领域文档收口.md)：CONTEXT、ADR 016、common 004；GUIDE 留给 dream。
@@ -37,7 +37,7 @@ note 从第一次改正文起进入 `in_progress`，不再长期停在 `pending`
 
 | Name | Description | Status | Reason | Next Step | Related Note |
 | --- | --- | --- | --- | --- | --- |
-| [001-固定提示词补note状态推进规则](001-固定提示词补note状态推进规则.md) | dsh 与 pi 的 system.md 补「开工即 in_progress」两行，按 to-skill 收敛措辞并加断言。 | blocked | 实现与测试已通过，待用户验收 | 用户验收后置 completed；003/004 已交付 | — |
+| [001-固定提示词补note状态推进规则](001-固定提示词补note状态推进规则.md) | dsh 与 pi 的 system.md 补「开工即 in_progress」一行，按 to-skill 收敛措辞并加断言。 | blocked | 一行文案已合入 dsh/pi，测试通过，待用户验收 | 用户验收后置 completed；003/004 已交付 | — |
 | [002-nano-flow-check增加pending未提交告警](002-nano-flow-check增加pending未提交告警.md) | check 对 active+pending+未提交+有正文的 note 报警；无 git 静默跳过，两包同改。 | blocked | 实现与测试已通过，待用户验收 | 用户验收后置 completed；003/004 已交付 | — |
-| [003-发布0.5.82并真机验收](003-发布0.5.82并真机验收.md) | 涨 0.5.82，跑全量检查、构建、pack、安装 web profile、push 并验收。 | blocked | 已发布 0.5.82 并安装，待用户重启宿主/新会话验收 | 用户重启宿主或开新会话验收后置 completed | — |
-| [004-领域文档收口](004-领域文档收口.md) | 更新 dsh CONTEXT、ADR 016 与 common 004，GUIDE 留给 dream。 | blocked | 领域文档已改完、check 通过，待用户验收 | 用户验收后置 completed；GUIDE 的两处口径留给 dream | — |
+| [003-发布0.5.82并真机验收](003-发布0.5.82并真机验收.md) | 涨 0.5.82，跑全量检查、构建、pack、安装 web profile、push 并验收。 | blocked | 已重新构建安装 0.5.82（一行文案），待用户重启验收 | 用户重启宿主或开新会话验收后置 completed | — |
+| [004-领域文档收口](004-领域文档收口.md) | 更新 dsh CONTEXT、ADR 016 与 common 004，GUIDE 留给 dream。 | blocked | CONTEXT/ADR 已同步一行文案，待用户验收 | 用户验收后置 completed；GUIDE 留给 dream | — |
