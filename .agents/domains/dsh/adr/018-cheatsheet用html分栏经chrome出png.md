@@ -37,7 +37,11 @@ status: accepted
 - 包体多约 2.7 MB；不含 mermaid 的卡不加载这份脚本，单次出图为 1~2 秒。
 - mermaid 渲染失败时保留为文本框，不中断出图；分页依赖图的实际高度，图错会连带版面偏差。
 
+## 更新
+
+- 2026-11-25 栏数 5 → 4：栏宽从约 212px 变成约 267px，5pt 下每行从约 32 字变成约 40 字；栏数仍不开放为参数，页数仍是唯一旋钮。
+
 ## 相关
 
-- [../../../../repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md](../../../../repos/dsh-toolkit/src/nano-flow/skills/learning/CHEATSHEET.md) — 路由正文
+- [../../../../repos/dsh-toolkit/src/nano-flow/skills/learning/NOTE.md](../../../../repos/dsh-toolkit/src/nano-flow/skills/learning/NOTE.md) — 速查卡正文所在（NOTE.md「速查卡」一节）
 - [017-pretty-doc产出飞书文档并走svg画板](017-pretty-doc产出飞书文档并走svg画板.md) — 另一条产出链，对比见决策
